@@ -1,0 +1,29 @@
+button {
+    text-decoration: none;
+    color: #452100;
+    font-size: 2rem;
+    background: #111 linear-gradient(
+            -72deg,
+            #ffde45,
+            #ffffff 16%,
+            #ffde45 21%,
+            #ffffff 24%,
+            #452100 27%,
+            #ffde45 36%,
+            #ffffff 45%,
+            #ffffff 60%,
+            #ffde45 72%,
+            #ffffff 80%,
+            #ffde45 84%,
+            #452100
+    );
+    border: solid gold 1px;
+    border-radius: 4px;
+    box-shadow: coral 0 0 15px;
+    padding: 0 5px 0 5px;
+    margin-top: 4.7%;
+}
+
+html {
+    background: #454545;
+}

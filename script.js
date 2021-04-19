@@ -1,11 +1,24 @@
 //@ts-check
 "use strict";
 
-console.log("banana");
+
+function OAuth20(){
+    window.location.replace("https://accounts.google.com/o/oauth2/v2/auth?" +
+        "scope=https://www.googleapis.com/auth/classroom.courses&" +
+        "include_granted_scopes=true&" +
+        "response_type=code&" +
+        "state=state_parameter_passthrough_value&" +
+        "redirect_uri=https://zhermit09.github.io/WebApp/&" +
+        "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com");
+    console.log(window.location.href)
+}
+
+
+/*console.log("banana");
 fetch('https://zhermit09.github.io/raycaster/index.html')
-    .then((respose)=> {
-        console.log("yes", respose);
-        return respose.json();
+    .then((response)=> {
+        console.log("yes", response);
+        return response.json();
     })
     .then((data) =>{
         console.log(data)
@@ -13,10 +26,8 @@ fetch('https://zhermit09.github.io/raycaster/index.html')
     .catch((error)=>{
         console.log("network error?", error)
 })
-
-
-
-// for retriving html
+*/
+// for retrieving html
     /*.then(res => res.text())
     .then(function (html){
         let parser = new DOMParser();

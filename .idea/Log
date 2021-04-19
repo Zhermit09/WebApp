@@ -1,4 +1,0 @@
-16/4
-    Learned about fetch.
-    Funktionen .json() funkade inte när jag fetchade, troligen för att jag försökte att omvandla något som inte var ett json.
-    Nu håller på att lära mig om OAuth 2.0 för att kunna komma in på ett google konto. (1h later, "Probably going to regret this")
