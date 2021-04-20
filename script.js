@@ -1,20 +1,26 @@
 //@ts-check
 "use strict";
+window.onload = () => urlElementsCheck();
 
-
-
-const url = new URL(window.location.href)
-console.log(url.search)
+function urlElementsCheck() {
+    try {
+        const url = new URL(window.location.href);
+        if (url.hash === null || url.hash === "") {
+            OAuth20();
+        }
+    } catch (error) {
+        console.error();
+    }
+}
 
 function OAuth20(){
     window.location.replace("https://accounts.google.com/o/oauth2/v2/auth?" +
         "scope=https://www.googleapis.com/auth/classroom.courses&" +
         "include_granted_scopes=true&" +
-        "response_type=code&" +
+        "response_type=token&" +
         "state=state_parameter_passthrough_value&" +
-        "redirect_uri=https://zhermit09.github.io/WebApp/&" +
+        "redirect_uri=http://localhost:63342/IdeaProjects/WebApp/index.html&" +
         "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com");
-
 }
 
 

@@ -1,3 +1,7 @@
+html {
+    background: #454545;
+}
+
 button {
     text-decoration: none;
     color: #452100;
@@ -24,6 +28,3 @@ button {
     margin-top: 4.7%;
 }
 
-html {
-    background: #454545;
-}

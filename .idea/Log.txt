@@ -5,24 +5,31 @@
 
 19/4
     OAuth 2.0
-    Got my parameters from google.devolpers website.
+    Got my parameters from google.devolpers.console website.
+    API documentation https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#oauth-2.0-endpoints_1
 
         Cilent ID: 82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com
         Client secret: Fyq8ymxUxmfUMxoTT7nMavoB
 
 
-    After a bit off suffering got a link that will authorize the user
-        https://accounts.google.com/o/oauth2/v2/auth?
+    After a bit off suffering and got a link that will authorize the user
+         https://accounts.google.com/o/oauth2/v2/auth?
          scope=https://www.googleapis.com/auth/classroom.courses&
          include_granted_scopes=true&
-         response_type=code&
+         response_type=token&
          state=state_parameter_passthrough_value&
-         redirect_uri=https://zhermit09.github.io/WebApp/&
+         redirect_uri=https:http://localhost:63342/IdeaProjects/WebApp/index.html&
          client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com
 _______________________________________________________________________________________________
     Rspose that i get when get redirected.
 
-    https://zhermit09.github.io/WebApp/?state=state_parameter_passthrough_value&code=
-    4/0AY0e-g6jV3n0pWFVgL8gmY7KDrxmebndDCHqq4azGwD3rbN0yxxES32QaSFYCE_Lte0qjw
-    &scope=https://www.googleapis.com/auth/classroom.courses
+    http://localhost:63342/IdeaProjects/WebApp/index.html#state=state_parameter_passthrough_value&access_token=
+    ya29.a0AfH6SMCw08rFlEdwL3VWbqmEgjK4LyYe-7LBxwNzqDHYED-oBtPBiu4nDc7zd-EoKuYglWTwPpmfD_qTZvRjhfiN0bfjW6yR5_SBWR_Q1IUxVi18a
+    oMX72O2J3l9VT-fcZ3xUvdX4XEuxjYJMAgVwHVJq1NA&
+    token_type=Bearer&expires_in=3599&
+    scope=https://www.googleapis.com/auth/classroom.courses
+
+    Finished Authrezation phaze, now i get a seesion token so i can keep workin onward
+
+
 
