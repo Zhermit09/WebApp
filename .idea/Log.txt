@@ -18,7 +18,7 @@
          include_granted_scopes=true&
          response_type=token&
          state=state_parameter_passthrough_value&
-         redirect_uri=https:http://localhost:63342/IdeaProjects/WebApp/index.html&
+         redirect_uri=http://localhost:63342/WebApp/index.html&
          client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com
 _______________________________________________________________________________________________
     Rspose that i get when get redirected.
@@ -30,6 +30,8 @@ ________________________________________________________________________________
     scope=https://www.googleapis.com/auth/classroom.courses
 
     Finished Authrezation phaze, now i get a seesion token so i can keep workin onward
+
+    http://localhost:63342/WebApp/index.html?_ijt=11bn6a7ore46vljlfr9lpv63u9
 
 
 
