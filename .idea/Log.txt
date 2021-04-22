@@ -33,5 +33,13 @@ ________________________________________________________________________________
 
     http://localhost:63342/WebApp/index.html?_ijt=11bn6a7ore46vljlfr9lpv63u9
 
+22/4
+    Today was filled with a lot of pain.
+    I learnt that my token has to go in a header when i make requests
+    Not a lot to talk about just hours of trial and error
+    Got blocked by Cords
 
+    Changed from Authentication to Authorization which fixed CORD block
+    Succesfully retrived Json with my courses from classroom
+    Succesfully extracted data from Json
 

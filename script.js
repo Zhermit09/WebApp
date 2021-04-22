@@ -1,10 +1,5 @@
 //@ts-check
 "use strict";
-fetch(location.href).then(res => res.json())
-    .then((out) => {
-        console.log('Checkout this JSON! ', out)
-    });
-
 window.onload = () => urlElementsCheck();
 let token;
 
@@ -16,9 +11,9 @@ function urlElementsCheck() {
             console.log("You don't have the token")
             OAuth20();
         } else {
-            console.log("You have the token" + "\n" + url.hash);
-            token = url.hash.substring(url.hash.indexOf("&access_token=") + 14,
-                url.hash.indexOf("&token_type="));
+            console.log("You have the token");
+            //maybe later do sessionStorage.setItem()
+            token = new URLSearchParams(window.location.hash).get('access_token');
         }
     } catch (error) {
         console.error();
@@ -35,16 +30,30 @@ function OAuth20() {
         "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com");
 }
 
-function Fetch() {
-    let header = new Headers();
-    header.append('Authorization', 'access_token' + token);
-    let req = new Request("https://classroom.googleapis.com/v1/courses", {
+
+
+async function Fetch() {
+
+    let h = new Headers();
+    h.append('Authorization', `Bearer ${token}`);
+
+    let req = new Request('https://classroom.googleapis.com/v1/courses', {
         method: 'GET',
-        headers: header
+        headers: h
     })
-    fetch(req).then((response) => {
-        console.log(response.json());
-    })
+    try {
+        const response = await fetch(req);
+        const {courses} = await response.json();
+        const {0:{enrollmentCode}} = courses;
+        return enrollmentCode;
+    }catch (error){
+        console.error(error);
+    }
+}
+let DATA;
+async function Log() {
+ DATA = await Fetch();
+console.log(DATA);
 }
 
 /*console.log("banana");
