@@ -43,3 +43,17 @@ ________________________________________________________________________________
     Succesfully retrived Json with my courses from classroom
     Succesfully extracted data from Json
 
+23/4
+
+New scope:
+https://www.googleapis.com/auth/classroom.coursework.me.readonly
+
+New reequest:
+https://classroom.googleapis.com/v1/courses/{classrom id here}/courseWork
+
+After more unga bunga i was able to fetch assgments data
+Next i plan to create a list with all assgments that have a due date
+then i can start adding them to callendar, but before that i prob should clean up the code mess
+
+
+
