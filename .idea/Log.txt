@@ -59,6 +59,8 @@ ________________________________________________________________________________
     Was building a function to get all classroom ids first and then get all the assigment with those ids
     Realized that it was fetching our old classrooms as well (even those we got kicked from)
 
-
+30/4
+    Batch sending of requests
+    a bunch of request optimazations
 
 
