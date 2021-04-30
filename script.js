@@ -2,6 +2,8 @@
 "use strict";
 window.onload = () => urlElementsCheck();
 let token;
+let classID = [];
+
 
 function urlElementsCheck() {
     token = JSON.parse(sessionStorage.getItem("Token"));
@@ -14,7 +16,7 @@ function urlElementsCheck() {
     } else {
         console.log("You have the token");
     }
-   // location.hash = "";
+    // location.hash = "";
 }
 
 function OAuth20() {
@@ -36,15 +38,14 @@ async function Fetch() {
     let h = new Headers();
     h.append('Authorization', `Bearer ${token}`);
 
-    let req = new Request('https://classroom.googleapis.com/v1/courses/129933204397/courseWork', {
+    //  /129933204397/courseWork
+    let req = new Request('https://classroom.googleapis.com/v1/courses', {
         method: 'GET',
         headers: h
     })
     try {
-
         const response = await fetch(req);
-        const t = await response.json();
-        DATA = t;
+        DATA = await response.json();
         if (DATA !== null) console.log("Fetched");
         console.log(DATA);
     } catch (error) {
@@ -52,28 +53,18 @@ async function Fetch() {
     }
 }
 
-function Log() {
+async function Assignments() {
+    let h = new Headers();
+    h.append('Authorization', `Bearer ${token}`);
 
-    OAuth20();
+    for (const element in DATA.courses) {
+        let clas = DATA.courses[element].id.toString();
+        let response = await fetch(`https://classroom.googleapis.com/v1/courses/${clas}/courseWork`,{
+            method: 'GET',
+            headers: h
+        })
+        let assigment = await response.json();
+        console.log(assigment)
+    }
+   // console.log(classID)
 }
-
-/*console.log("banana");
-fetch('https://zhermit09.github.io/raycaster/index.html')
-    .then((response)=> {
-        console.log("yes", response);
-        return response.json();
-    })
-    .then((data) =>{
-        console.log(data)
-    })
-    .catch((error)=>{
-        console.log("network error?", error)
-})
-*/
-// for retrieving html
-/*.then(res => res.text())
-.then(function (html){
-    let parser = new DOMParser();
-    let doc = parser.parseFromString(html, 'text/html');
-    console.log(doc)
-})*/
