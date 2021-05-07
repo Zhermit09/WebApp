@@ -1,38 +1,61 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css"/>
+    <link rel=icon type="image/png" href="./images/NGNL.png">
     <title>Tasker</title>
 </head>
-<body >
-<button onclick="urlElementsCheck()" type="button" id="button">Fetch</button>
-<button onclick="courseFetch()" type="button" id="button1">Log</button>
-<div class="container" >
-    <div class="calendar">
-        <div class="month">
-            <i class="fas fa-angle-left fa-2x prev"></i>
-            <div class="date">
-                <h1></h1>
-                <p></p>
-            </div>
-            <i class="fas fa-angle-right fa-2x next"> </i>
-        </div>
-        <div class="weekdays">
-            <div>Mon</div>
-            <div>Tue</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
-            <div>Sun</div>
-        </div>
-        <div class="days">
+<body>
 
+<button onclick="urlElementsCheck()" type="button" id="button">Fetch</button>
+<button onclick="displayAssignments()" type="button" id="button1">Log</button>
+<main>
+    <div class="calendarContainer">
+        <div class="calendar">
+            <div class="header">
+                <i class="fas fa-angle-left fa-2x prev"></i>
+                <div class="date">
+                    <h1></h1>
+                    <p></p>
+                </div>
+                <i class="fas fa-angle-right fa-2x next"> </i>
+            </div>
+            <div class="weekdays">
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+                <div>Sun</div>
+            </div>
+            <div class="days">
+            </div>
         </div>
     </div>
-</div>
+    <div class="listContainer">
+        <div class="list">
+            <div class="listHeader">
+                <i class="fa fa-plus fa-plus fa-2x add"></i>
+                <h1>List</h1>
+                <div>
+                    <p id="counter"></p>
+                    <p id="date"></p>
+                </div>
+            </div>
+            <div class="display">
+                <label for="inputField"></label><input type="text" id="inputField" placeholder="🔍Search....">
+                <div class="assContainer">
+                    <ul id="assigmentList">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 </body>
 </html>
 <script src="https://kit.fontawesome.com/f7f93b2485.js" crossorigin="anonymous"></script>

@@ -11,7 +11,7 @@
 
 html {
     font-size: 62.5%;
-    background: #282828;
+    background: #404040;
     font-family: 'Audiowide', sans-serif;
 }
 
@@ -41,26 +41,32 @@ button {
     margin-top: 4.7%;
 }
 
-.container {
-    margin-top: 1rem;
-    width: 100%;
+main{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+/*-----------------------------------------------------*/
+.calendarContainer {
+    width: 30%;
     height: 100%;
     color: #fff;
     display: flex;
     justify-content: center;
     align-content: center;
-
 }
 
 .calendar {
     width: 45rem;
     height: 52rem;
     background-color: #3d3d3d;
-    box-shadow: 0 0 2rem rgb(255, 72, 0);
-    border-radius:1.5rem 1.5rem 2rem 2rem;
+    box-shadow: 0 0.5rem 2rem #000000;
+    border: 1px solid #a15113;
+    border-radius: 1.5rem 1.5rem 2rem 2rem;
 }
 
-.month {
+.header {
     width: 100%;
     height: 10rem;
     background-color: #287200;
@@ -74,7 +80,7 @@ button {
     border-radius: 1.5rem 1.5rem 0 0;
 }
 
-.month h1 {
+.header h1 {
     font-family: "Cinzel", sans-serif;
     font-size: 3rem;
     font-weight: 700;
@@ -83,7 +89,7 @@ button {
     margin-bottom: 0.7rem;
 }
 
-.month p {
+.header p {
     letter-spacing: 0.1rem;
     font-size: 1.4rem;
 }
@@ -116,57 +122,167 @@ button {
     flex-wrap: wrap;
 }
 
-.days div{
+.days div {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0.3rem;
-    width: calc(40.4rem / 7);
+    width: calc(40.2rem / 7);
     height: calc(34rem / 6);
     text-shadow: 0.1rem 0.3rem 0.3rem rgba(0, 0, 0, 0.5);
+    border-radius: 1rem;
 }
 
-.days div:hover:not(.today):not(.otherToday){
+.days div:hover:not(.today):not(.otherToday) {
     background-color: #2d2d2d;
     border: 1px solid #5bc423;
     cursor: pointer;
 }
 
 .prev-date,
-.next-date{
+.next-date {
     color: rgba(199, 208, 255, 0.5);
 }
 
 .today {
-    background-color: #339e00;
+    background-color: #39af01;
+    border: 1px solid rgb(0, 255, 82);
+
 }
 
-.today:hover{
+.today:hover, .otherToday:hover {
     background-color: #287200;
     border: 2px solid #000000;
     cursor: pointer;
 }
-.otherToday{
-    background-color: #d58814;
-}
-.otherToday:hover{
-    background-color: #d46c2a;
-    border: 2px solid #000000;
-    cursor: pointer;
+
+.otherToday {
+    background-color: #368208;
+    border: 1px solid #00ff52;
 }
 
+
 .next,
-.prev{
+.prev {
     width: 2rem;
     height: 2rem;
 }
 
-.next:hover, .prev:hover{
+.next:hover, .prev:hover {
     color: #9c9c9c;
     text-shadow: 0 0.3rem 0.3rem rgba(0, 0, 0, 1);
 }
 
-.next:active, .prev:active{
+.next:active, .prev:active {
     color: #d46c2a;
+}
+
+/*-----------------------------------------------------*/
+
+.listContainer{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    width: 30%;
+}
+
+.list {
+    color: white;
+    width: 35rem;
+    height: 52rem;
+    border: 1px solid #ff0000;
+    text-shadow: 0.1rem 0.3rem 0.3rem rgba(0, 0, 0, 0.5);
+}
+
+.listHeader {
+    padding: 1rem;
+    height: 12rem;
+    width: 100%;
+    background-color: #9d00ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.listHeader i {
+    margin: 0 0.125rem;
+    align-self: flex-start;
+}
+
+.listHeader h1 {
+    font-family: "Cinzel", sans-serif;
+    font-size: 3.2rem;
+}
+
+.listHeader div{
+
+    font-size: 1.3rem;
+    text-align: right;
+    align-self: flex-end;
+}
+
+.display {
+    padding: 0.2rem;
+    border: 1px white solid;
+    display: flex;
+    height: 39.8rem;
+    flex-direction: column;
+    background: linear-gradient(
+            45deg,
+            #d53369,
+            #cbad6d);
+}
+
+.display input {
+    align-self: center;
+    width: 100%;
+    height: 2rem;
+    margin-bottom: 0.2rem;
+
+}
+
+.display .assContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.display ul {
+    width: 100%;
+}
+
+
+.display .assContainer ul li {
+    width: 100%;
+    height: 4rem;
+    border: 1px solid #00a6ff;
+    list-style: none;
+    padding: 0.5rem;
+    background-color: #343434;
+
+}
+
+.display .assContainer::-webkit-scrollbar {
+    width: 0.8rem;
+}
+
+.display .assContainer::-webkit-scrollbar-track-piece {
+    background-color: white;
+    border-radius: 1rem;
+}
+
+.display .assContainer::-webkit-scrollbar-thumb {
+    border-radius: 1rem;
+    -webkit-box-shadow: inset 0 0 0.7rem rgba(0, 0, 0, .3);
+    background: #D62929 linear-gradient(
+            90deg,
+            #ff0032,
+            #452100
+    );
 }
 
