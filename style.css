@@ -1,8 +1,21 @@
-html {
-    background: #454545;
+/*noinspection CssUnknownTarget*/
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+/*noinspection CssUnknownTarget*/
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Merienda:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-button{
+html {
+    font-size: 62.5%;
+    background: #282828;
+    font-family: 'Audiowide', sans-serif;
+}
+
+button {
     text-decoration: none;
     color: #452100;
     font-size: 2rem;
@@ -26,5 +39,134 @@ button{
     box-shadow: coral 0 0 15px;
     padding: 0 5px 0 5px;
     margin-top: 4.7%;
+}
+
+.container {
+    margin-top: 1rem;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+}
+
+.calendar {
+    width: 45rem;
+    height: 52rem;
+    background-color: #3d3d3d;
+    box-shadow: 0 0 2rem rgb(255, 72, 0);
+    border-radius:1.5rem 1.5rem 2rem 2rem;
+}
+
+.month {
+    width: 100%;
+    height: 10rem;
+    background-color: #287200;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    text-align: center;
+    text-shadow: 0 0.3rem 0.3rem rgba(0, 0, 0, 0.5);
+    border-bottom: 2px #ea935b solid;
+    border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.month h1 {
+    font-family: "Cinzel", sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    margin-bottom: 0.7rem;
+}
+
+.month p {
+    letter-spacing: 0.1rem;
+    font-size: 1.4rem;
+}
+
+.weekdays {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 4rem;
+    padding: 0.2rem;
+    border-bottom: 2px #ea935b solid;
+}
+
+.weekdays div {
+    font-size: 1.5rem;
+    letter-spacing: 0.15rem;
+    width: calc(44.6rem / 7);
+
+    text-align: center;
+    text-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.5);
+
+}
+
+.days {
+    text-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.8);
+    font-size: 1.4rem;
+    width: 100%;
+    display: flex;
+    padding: 0.2rem;
+    flex-wrap: wrap;
+}
+
+.days div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.3rem;
+    width: calc(40.4rem / 7);
+    height: calc(34rem / 6);
+    text-shadow: 0.1rem 0.3rem 0.3rem rgba(0, 0, 0, 0.5);
+}
+
+.days div:hover:not(.today):not(.otherToday){
+    background-color: #2d2d2d;
+    border: 1px solid #5bc423;
+    cursor: pointer;
+}
+
+.prev-date,
+.next-date{
+    color: rgba(199, 208, 255, 0.5);
+}
+
+.today {
+    background-color: #339e00;
+}
+
+.today:hover{
+    background-color: #287200;
+    border: 2px solid #000000;
+    cursor: pointer;
+}
+.otherToday{
+    background-color: #d58814;
+}
+.otherToday:hover{
+    background-color: #d46c2a;
+    border: 2px solid #000000;
+    cursor: pointer;
+}
+
+.next,
+.prev{
+    width: 2rem;
+    height: 2rem;
+}
+
+.next:hover, .prev:hover{
+    color: #9c9c9c;
+    text-shadow: 0 0.3rem 0.3rem rgba(0, 0, 0, 1);
+}
+
+.next:active, .prev:active{
+    color: #d46c2a;
 }
 

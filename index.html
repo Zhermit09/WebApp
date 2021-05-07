@@ -1,13 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-    <meta charset="UTF-8" >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css"/>
     <title>Tasker</title>
 </head>
-<body>
-<button onclick="Fetch()" type="button" id="button">Fetch</button>
-<button onclick="test()" type="button" id="button1">Log</button>
+<body >
+<button onclick="urlElementsCheck()" type="button" id="button">Fetch</button>
+<button onclick="courseFetch()" type="button" id="button1">Log</button>
+<div class="container" >
+    <div class="calendar">
+        <div class="month">
+            <i class="fas fa-angle-left fa-2x prev"></i>
+            <div class="date">
+                <h1></h1>
+                <p></p>
+            </div>
+            <i class="fas fa-angle-right fa-2x next"> </i>
+        </div>
+        <div class="weekdays">
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+            <div>Sun</div>
+        </div>
+        <div class="days">
+
+        </div>
+    </div>
+</div>
 </body>
 </html>
+<script src="https://kit.fontawesome.com/f7f93b2485.js" crossorigin="anonymous"></script>
 <script src="script.js"></script>

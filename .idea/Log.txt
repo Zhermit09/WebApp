@@ -63,4 +63,8 @@ ________________________________________________________________________________
     Batch sending of requests
     a bunch of request optimazations
 
+6/5
+    Calendar
+    https://www.youtube.com/watch?v=o1yMqPyYeAo
+
 
