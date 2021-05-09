@@ -137,10 +137,11 @@ function createObj() {
 
 //---------------------------------------------------------------------------------------------
 const date = new Date();
-
+document.querySelector('.list .header div #date').innerHTML = date.toDateString()
 
 function calendar() {
     if (date.getMonth() === new Date().getMonth()) date.setDate(new Date().getDate())
+
     const calMonth = document.querySelector(".date h1");
     const calFullDate = document.querySelector(".date p");
     const calDays = document.querySelector('.days');
@@ -163,7 +164,7 @@ function calendar() {
     calMonth.innerHTML = months[date.getMonth()]
     calFullDate.innerHTML = date.toDateString()
     for (let k = prevDate; k <= lMonthLDay.getDate(); k++) {
-        days += `<div class="prev-date">${k}</div>`;
+        days += `<div class="otherDate">${k}</div>`;
         calDays.innerHTML = days;
     }
     for (let i = 1; i <= monthLDay.getDate(); i++) {
@@ -172,22 +173,83 @@ function calendar() {
         } else if (i === date.getDate() && date.getMonth() === new Date().getMonth()) {
             days += `<div class="otherToday">${i}</div>`;
         } else {
-            if (i === 1) {
-                days += `<div class="nDay" tabindex="1">${i}</div>`
-            } else {
-                days += `<div class="nDay">${i}</div>`;
-                calDays.innerHTML = days;
-            }
+
+            days += `<div class="nDay" class="2x">${i}</div>`;
+            calDays.innerHTML = days;
+
         }
     }
 
     if (lMonthLDay.getDay() + monthLDay.getDate() < 35) nextDate += 7;
     for (let j = 1; j <= nextDate; j++) {
-        days += `<div class="prev-date">${j}</div>`;
+        days += `<div class="otherDate">${j}</div>`;
         calDays.innerHTML = days;
     }
+    colorChange();
+}
 
-    console.log()
+function colorChange() {
+    const daysBorder = document.querySelectorAll(".days div")
+    const element = [
+        document.querySelector(".header h1"),
+        document.querySelector(".header p"),
+        document.querySelector(".next"),
+        document.querySelector(".prev")]
+
+    switch (date.getMonth()) {
+        case 11:
+        case 0:
+        case 1:
+            for (let i = 0; i < element.length; i++) {
+                element[i].classList.add("winter");
+                element[i].classList.remove("autumn");
+                element[i].classList.remove("spring");
+                element[i].classList.remove("summer");
+            }
+            daysBorder.forEach((div) =>{
+                div.style.borderImage = "linear-gradient(to bottom,#0339fa, #03fafa, #0339fa,#1e1e1d 99%) 1";
+            })
+            break;
+        case 2:
+        case 3:
+        case 4:
+            for (let i = 0; i < element.length; i++) {
+                element[i].classList.add("spring");
+                element[i].classList.remove("autumn");
+                element[i].classList.remove("summer");
+                element[i].classList.remove("winter");
+            }
+            daysBorder.forEach((div) =>{
+                div.style.borderImage = "linear-gradient(to bottom,#ff9900, #ffe400, #FF9900FF,#1e1e1d 99%) 1";
+            })
+            break;
+        case 5:
+        case 6:
+        case 7:
+            for (let i = 0; i < element.length; i++) {
+                element[i].classList.add("summer");
+                element[i].classList.remove("spring");
+                element[i].classList.remove("autumn");
+                element[i].classList.remove("winter");
+            }
+            daysBorder.forEach((div) =>{
+                div.style.borderImage = "linear-gradient(to bottom,#095038, #03fa66, #095038,#1e1e1d 99%) 1";
+            })
+            break;
+        case 8:
+        case 9:
+        case 10:
+            for (let i = 0; i < element.length; i++) {
+                element[i].classList.add("autumn");
+                element[i].classList.remove("spring");
+                element[i].classList.remove("winter");
+                element[i].classList.remove("summer");
+            }
+            daysBorder.forEach((div) =>{
+                div.style.borderImage = "linear-gradient(to bottom,#ff2600, #ffa12f 20%, #ff2600 80%,#1e1e1d 99%) 1";
+            })
+            break;
+    }
 }
 
 document.querySelector(".prev")
@@ -199,7 +261,6 @@ document.querySelector(".prev")
 document.querySelector(".next")
     .addEventListener("click", () => {
         date.setMonth(date.getMonth() + 1)
-        console.log( date.getMonth())
         if (date.getMonth() !== new Date().getMonth()) {
             date.setDate(1)
         }
@@ -211,21 +272,22 @@ document.querySelector('.days').addEventListener("mouseover", (hover) => {
         let targetDate = date
         targetDate.setDate(parseInt(hover.target.innerHTML))
         document.querySelector(".date p").innerHTML = targetDate.toDateString()
+        hover.target.addEventListener("mouseleave", () => {
+            if (date.getMonth() === new Date().getMonth()) date.setDate(new Date().getDate())
+            else {
+                date.setDate(1)
+            }
+            document.querySelector(".date p").innerHTML = date.toDateString();
+        })
     }
 })
 
-document.querySelector('.days').addEventListener("mouseout", () => {
-
-
-    document.querySelector(".date p").innerHTML = date.toDateString();
-})
-
-
+const counter = document.querySelector('.list .header div #counter')
+counter.innerHTML = "Total: "
 //---------------------------------------------------------------------------------------------
 function displayAssignments() {
-    document.querySelector('.listHeader div #date').innerHTML = date.toDateString()
+    document.querySelector('.list .header div #date').innerHTML = date.toDateString()
     const assList = document.querySelector('.assContainer #assigmentList')
-    const counter = document.querySelector('.listHeader div #counter')
     let temp = ""
 
 
@@ -235,9 +297,8 @@ function displayAssignments() {
             temp += `<li class="assigment">${workData['title']}</li>`
             assList.innerHTML = temp;
         })
-
     })
-    counter.innerHTML = "Assignments: " + assList.childElementCount;
+     counter.innerHTML = "Total: " + assList.childElementCount;
     if (assList.childElementCount <= 1) {
         console.log("almost empty!")
     }

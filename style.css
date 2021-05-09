@@ -62,12 +62,12 @@ main {
     height: 52rem;
     background-color: #1e1e1d;
     box-shadow: 0 0.5rem 2rem #000000;
-    border: 0.4rem ridge rgba(195, 7, 63, 1);
+    border: 0.4rem ridge rgb(184, 184, 184);
 
 }
 
-.header {
 
+.header {
     width: 100%;
     height: 10rem;
     display: flex;
@@ -75,27 +75,51 @@ main {
     align-items: center;
     padding: 0 2rem;
     text-align: center;
-    text-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.3);
-    border-radius: 1rem 1rem 0.3rem 0.1rem;
+    border-radius: 0 0 0.3rem 0.3rem;
 }
 
-.header h1 {
-    background: linear-gradient(#ffffff, #ffe400);
+.header .spring {
+    background: linear-gradient(#ff9900, #ffe400, #FF9900FF);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 7.5rem rgb(255, 255, 255);
+}
+
+.header .summer {
+    background: linear-gradient(#095038, #03fa66, #095038);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 7.5rem rgb(255, 255, 255);
+
+}
+
+.header .autumn {
+    background: linear-gradient(#ff2600, #ff652f, #ff2600);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 7.5rem rgb(255, 255, 255);
+
+}
+
+.header .winter {
+    background: linear-gradient(#0339fa, #03fafa, #0339fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 7.5rem rgb(255, 255, 255);
+}
+
+
+.header h1 {
+
     font-family: "Cinzel", sans-serif;
-    font-size: 3rem;
+    font-size: 4rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.2rem;
-    margin-bottom: 0.7rem;
 }
 
 
 .header p {
-    background: linear-gradient(#ffffff, #ffd503);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     letter-spacing: 0.1rem;
     font-size: 1.4rem;
 }
@@ -110,7 +134,6 @@ main {
 }
 
 .weekdays div {
-
     font-size: 1.5rem;
     letter-spacing: 0.15rem;
     width: calc(44.6rem / 7);
@@ -119,13 +142,15 @@ main {
     border-style: solid;
     border-image: linear-gradient(
             to bottom,
+            rgba(0, 0, 0, 0),
             red,
             rgba(0, 0, 0, 0)
+
     ) 1 100%;
     border-right: none;
     border-radius: 10px;
     text-align: center;
-    text-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.5);
+    text-shadow: 0.1rem 0.2rem 0.2rem rgb(0, 0, 0);
 
 }
 
@@ -150,68 +175,55 @@ main {
     width: calc(39.6rem / 7);
     height: calc(33.2rem / 6);
     text-shadow: 0.1rem 0.3rem 0.3rem rgba(0, 0, 0, 0.5);
-    border-width: 1px;
-    border-style: solid;
-    border-image: linear-gradient(
-            to bottom,
-            #ff0000,
-            #1e1e1d 99%
-    ) 1;
     box-shadow: -0.2rem -0.3rem 0.3rem rgba(0, 0, 0, 1);
     text-align: center;
+    border-width: 1px;
+    border-style: solid;
 }
 
 .days .day {
 
 }
 
-.days div:hover:not(.today):not(.otherToday){
-    background-color: #323232;
-    border: 1px solid #5bc423;
+.days div:hover:not(.today):not(.otherToday) {
+    background: #323232;
+    border: 1px solid #ffffff;
     cursor: pointer;
 }
 
-.prev-date,
-.next-date {
+.otherDate {
     color: rgba(199, 208, 255, 0.7);
     background: linear-gradient(#000000, #1e1e1d 99%);
 }
 
 div .today {
-    border-image: none;
-    border: 1px solid rgb(255, 255, 255);
     background: linear-gradient(#ff0000, #1e1e1d 99%);
-
-
-
 }
 
 .today:hover, .otherToday:hover {
-    background-color: #287200;
-    border: 2px solid #000000;
+    background: linear-gradient(#cd0000, #1e1e1d 99%);
+    border: 1px solid #ffffff;
     cursor: pointer;
 }
 
 .otherToday {
-    background-color: #368208;
-    border: 1px solid #00ff52;
+    border: 1px solid #ffffff;
+    background: linear-gradient(#ff3300, #1e1e1d 99%);
 }
 
 
-.next,
-.prev {
+.header i {
     width: 2rem;
     height: 2rem;
+    text-shadow: 0 0 3rem rgb(255, 255, 255);
 }
 
-.next:hover, .prev:hover {
+
+.header i:hover, .header i:hover {
     color: #9c9c9c;
-    text-shadow: 0 0.3rem 0.3rem rgba(0, 0, 0, 1);
+    text-shadow: 0 0.3rem 0.3rem rgba(0, 0, 0, 0.5);
 }
 
-.next:active, .prev:active {
-    color: #d46c2a;
-}
 
 /*-----------------------------------------------------*/
 
@@ -219,67 +231,92 @@ div .today {
     display: flex;
     justify-content: center;
     align-content: center;
-    width: 30%;
+    color: white;
+    width: 50%;
 }
 
 .list {
-    color: white;
-    width: 35rem;
+    width: 45rem;
     height: 52rem;
-    border: 1px solid #ff0000;
-    text-shadow: 0.1rem 0.3rem 0.3rem rgba(0, 0, 0, 0.5);
+    background-color: #1e1e1d;
+    box-shadow: 0 0.5rem 2rem #000000;
+    border: 0.4rem ridge rgb(184, 184, 184);
 }
 
-.listHeader {
-    padding: 1rem;
-    height: 12rem;
-    width: 100%;
-    background: radial-gradient(
-            #d02c6b,
-            #D80351,
-            #490015
-    );
-    display: flex;
+.list .header {
+    width: 44.2rem;
+    height: 14.4rem;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
+    padding: 0.2rem;
 }
 
-.listHeader i {
-    margin: 0 0.125rem;
+.list .header i {
+    margin: 1rem  0.125rem 0 1.125rem ;
     align-self: flex-start;
+    background: linear-gradient(#454545, #ffffff, #454545);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 7.5rem rgb(255, 255, 255);
 }
 
-.listHeader h1 {
-    font-family: "Cinzel", sans-serif;
-    font-size: 3.2rem;
+.list .header h1 {
+    background: linear-gradient(#454545 , #ffffff, #454545);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 7.5rem rgb(255, 255, 255);
 }
 
-.listHeader div {
-
-    font-size: 1.3rem;
+.list .header div {
     text-align: right;
     align-self: flex-end;
+    letter-spacing: 0.1rem;
+    font-size: 1.4rem;
+    background: linear-gradient(#454545, #ffffff, #454545);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 7.5rem rgb(255, 255, 255);
+    margin-right: 0.4rem;
 }
 
 .display {
-    padding: 0.2rem;
-    border: 1px white solid;
+
     display: flex;
-    height: 39.8rem;
+    height: 36.8rem;
     flex-direction: column;
-    background: linear-gradient(
-            45deg,
-            #d53369,
-            #cbad6d);
 }
 
-.display input {
-    align-self: center;
-    width: 100%;
-    height: 2rem;
-    margin-bottom: 0.2rem;
+.inputContainer{
+    display: flex;
+    justify-content: left;
+    background: linear-gradient(
+            to bottom,
+            #ff0000,
+            #4e0000,
+            #2a0000
+    );
+    padding: 0.4rem;
+}
 
+.inputContainer input {
+    background: gray;
+    color:  white;
+    outline: none;
+   /* background-color: #666666;*/
+    align-self: center;
+    width: 25rem;
+    height: 2.5rem;
+    padding: 0.3rem;
+    border-radius: 1rem;
+    margin-left: 1rem;
+
+}
+
+.inputContainer input::placeholder{
+    color: #ffffff;
+    font-size: 1.4rem;
+    opacity: 0.7;
 }
 
 .display .assContainer {
@@ -312,8 +349,7 @@ div .today {
 }
 
 .display .assContainer::-webkit-scrollbar-track-piece {
-    background-color: white;
-    border-radius: 1rem;
+    background-color: #1e1e1d;
 }
 
 .display .assContainer::-webkit-scrollbar-thumb {
