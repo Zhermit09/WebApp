@@ -23,7 +23,7 @@ function urlElementsCheck() {
         console.log("You have the token");
     }
     location.hash = "";
-    courseFetch().then(()=>displayAssignments());
+    courseFetch().then(() => displayAssignments());
     calendar();
 }
 
@@ -138,10 +138,12 @@ function createObj() {
 //---------------------------------------------------------------------------------------------
 const date = new Date();
 
+
 function calendar() {
-    const calMonth = document.querySelector(".date h1")
-    const calFullDate = document.querySelector(".date p")
-    const calDays = document.querySelector('.days')
+    if (date.getMonth() === new Date().getMonth()) date.setDate(new Date().getDate())
+    const calMonth = document.querySelector(".date h1");
+    const calFullDate = document.querySelector(".date p");
+    const calDays = document.querySelector('.days');
 
     let days = "";
 
@@ -170,8 +172,12 @@ function calendar() {
         } else if (i === date.getDate() && date.getMonth() === new Date().getMonth()) {
             days += `<div class="otherToday">${i}</div>`;
         } else {
-            days += `<div>${i}</div>`;
-            calDays.innerHTML = days;
+            if (i === 1) {
+                days += `<div class="nDay" tabindex="1">${i}</div>`
+            } else {
+                days += `<div class="nDay">${i}</div>`;
+                calDays.innerHTML = days;
+            }
         }
     }
 
@@ -180,18 +186,40 @@ function calendar() {
         days += `<div class="prev-date">${j}</div>`;
         calDays.innerHTML = days;
     }
+
+    console.log()
 }
 
 document.querySelector(".prev")
     .addEventListener("click", () => {
         date.setMonth(date.getMonth() - 1)
+        if (date.getMonth() !== new Date().getMonth()) date.setDate(1)
         calendar()
     })
 document.querySelector(".next")
     .addEventListener("click", () => {
         date.setMonth(date.getMonth() + 1)
+        console.log( date.getMonth())
+        if (date.getMonth() !== new Date().getMonth()) {
+            date.setDate(1)
+        }
         calendar()
     })
+
+document.querySelector('.days').addEventListener("mouseover", (hover) => {
+    if (hover.target.innerHTML.length <= 2 && hover.target.innerHTML >= 1) {
+        let targetDate = date
+        targetDate.setDate(parseInt(hover.target.innerHTML))
+        document.querySelector(".date p").innerHTML = targetDate.toDateString()
+    }
+})
+
+document.querySelector('.days').addEventListener("mouseout", () => {
+
+
+    document.querySelector(".date p").innerHTML = date.toDateString();
+})
+
 
 //---------------------------------------------------------------------------------------------
 function displayAssignments() {
@@ -210,8 +238,6 @@ function displayAssignments() {
 
     })
     counter.innerHTML = "Assignments: " + assList.childElementCount;
-
-    console.log(assList.childElementCount)
     if (assList.childElementCount <= 1) {
         console.log("almost empty!")
     }
