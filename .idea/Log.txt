@@ -71,3 +71,5 @@ ________________________________________________________________________________
     List
     Starting to assemble info in obejects so that i can sort and use it easier
 
+10/5
+    Changed styles of the objects

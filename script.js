@@ -207,7 +207,7 @@ function colorChange() {
                 element[i].classList.remove("summer");
             }
             daysBorder.forEach((div) =>{
-                div.style.borderImage = "linear-gradient(to bottom,#0339fa, #03fafa, #0339fa,#1e1e1d 99%) 1";
+                div.style.borderImage = "linear-gradient(to bottom,#0339fa, #03fafa, #0339fa,#1e1e1d 98%) 1";
             })
             break;
         case 2:
@@ -220,7 +220,7 @@ function colorChange() {
                 element[i].classList.remove("winter");
             }
             daysBorder.forEach((div) =>{
-                div.style.borderImage = "linear-gradient(to bottom,#ff9900, #ffe400, #FF9900FF,#1e1e1d 99%) 1";
+                div.style.borderImage = "linear-gradient(to bottom,#ff9900, #ffe400, #FF9900FF,#1e1e1d 98%) 1";
             })
             break;
         case 5:
@@ -233,7 +233,7 @@ function colorChange() {
                 element[i].classList.remove("winter");
             }
             daysBorder.forEach((div) =>{
-                div.style.borderImage = "linear-gradient(to bottom,#095038, #03fa66, #095038,#1e1e1d 99%) 1";
+                div.style.borderImage = "linear-gradient(to bottom,#095038, #03fa66, #095038,#1e1e1d 98%) 1";
             })
             break;
         case 8:
@@ -246,7 +246,7 @@ function colorChange() {
                 element[i].classList.remove("summer");
             }
             daysBorder.forEach((div) =>{
-                div.style.borderImage = "linear-gradient(to bottom,#ff2600, #ffa12f 20%, #ff2600 80%,#1e1e1d 99%) 1";
+                div.style.borderImage = "linear-gradient(to bottom,#ff2600, #ffa12f 20%, #ff2600 80%,#1e1e1d 98%) 1";
             })
             break;
     }
