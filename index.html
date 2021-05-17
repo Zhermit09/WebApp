@@ -47,19 +47,22 @@
             </div>
             <div class="display">
                 <div class="inputContainer">
-                <label>
-                    <input type="search" id="inputField" placeholder="Search....🔍">
-                </label>
-                    <select id="#Filter" >
-                        <optgroup label="Classes"></optgroup>
-                        <option value="Class" hidden>Chose</option>
-                        <option value="Class">Japanska</option>
-                        <option value="Class">Dlass</option>
-                        <option value="Class">Ciass</option>
-                    </select>
+                    <label for="#Filter" id="forSelect">
+                        <select id="#Filter" onfocus="size='8'" onblur="size='1'" onchange="filterChanged()">
+                            <optgroup label="Classes"></optgroup>
+                            <option value="Class" hidden>Filters</option>
+                            <option value="Class">Japaasdsdaanska</option>
+                            <option value="Class">Japaqwewqenska</option>
+                            <option value="Class">Japanska</option>
+                        </select>
+                    </label>
+                    <label for="inputField" id="forFilter"><input type="search" id="inputField" placeholder="Search...">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </label>
+
                 </div>
 
-                    <div class="assContainer">
+                <div class="assContainer">
                     <ul id="assigmentList">
                     </ul>
                 </div>

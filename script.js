@@ -53,6 +53,7 @@ async function courseFetch() {
     } catch (error) {
         console.error(error);
     }
+    filters();
     await assigmentFetch();
 }
 
@@ -104,8 +105,6 @@ async function statusFetch() {
                     }).then((res) => res.json()))
                 }
             })
-
-
         })
     } catch (error) {
         console.error(error);
@@ -119,20 +118,26 @@ let ObjArr = [];
 
 function createObj() {
 
+    assignments.forEach((courseWorks) => {
+        const {courseWork} = courseWorks;
+        courseWork.forEach((workData) => {
+            ObjArr.push(
+                {
+                    Title: workData['title'],
+                    Link: workData['alternateLink'],
+                    CourseID: workData['courseId'],
+                    DueDate: workData['dueDate'],
+                    DueTime: workData['dueTime'],
+                    AssigmentID: workData['id'],
+                    Late: submissions[0]['studentSubmissions'][0]['late'],
+                    State: submissions[0]['studentSubmissions'][0]['state']
 
-    ObjArr[0] = {
-        Title: assignments[0]['courseWork'][0]['title'],
-        Link: assignments[0]['courseWork'][0]['alternateLink'],
-        CourseID: assignments[0]['courseWork'][0]['courseId'],
-        DueDate: assignments[0]['courseWork'][0]['dueDate'],
-        DueTime: assignments[0]['courseWork'][0]['dueTime'],
-        AssigmentID: assignments[0]['courseWork'][0]['id'],
-        Late: submissions[0]['studentSubmissions'][0]['late'],
-        State: submissions[0]['studentSubmissions'][0]['state']
+                })
+        })
+    })
+        console.log("yeet____________________\n");
+    console.log(ObjArr)
 
-    }
-    console.log("yeet____________________\n");
-    console.log(ObjArr[0])
 }
 
 //---------------------------------------------------------------------------------------------
@@ -206,7 +211,7 @@ function colorChange() {
                 element[i].classList.remove("spring");
                 element[i].classList.remove("summer");
             }
-            daysBorder.forEach((div) =>{
+            daysBorder.forEach((div) => {
                 div.style.borderImage = "linear-gradient(to bottom,#0339fa, #03fafa, #0339fa,#1e1e1d 98%) 1";
             })
             break;
@@ -219,7 +224,7 @@ function colorChange() {
                 element[i].classList.remove("summer");
                 element[i].classList.remove("winter");
             }
-            daysBorder.forEach((div) =>{
+            daysBorder.forEach((div) => {
                 div.style.borderImage = "linear-gradient(to bottom,#ff9900, #ffe400, #FF9900FF,#1e1e1d 98%) 1";
             })
             break;
@@ -232,7 +237,7 @@ function colorChange() {
                 element[i].classList.remove("autumn");
                 element[i].classList.remove("winter");
             }
-            daysBorder.forEach((div) =>{
+            daysBorder.forEach((div) => {
                 div.style.borderImage = "linear-gradient(to bottom,#095038, #03fa66, #095038,#1e1e1d 98%) 1";
             })
             break;
@@ -245,7 +250,7 @@ function colorChange() {
                 element[i].classList.remove("winter");
                 element[i].classList.remove("summer");
             }
-            daysBorder.forEach((div) =>{
+            daysBorder.forEach((div) => {
                 div.style.borderImage = "linear-gradient(to bottom,#ff2600, #ffa12f 20%, #ff2600 80%,#1e1e1d 98%) 1";
             })
             break;
@@ -284,12 +289,12 @@ document.querySelector('.days').addEventListener("mouseover", (hover) => {
 
 const counter = document.querySelector('.list .header div #counter')
 counter.innerHTML = "Total: "
+
 //---------------------------------------------------------------------------------------------
 function displayAssignments() {
     document.querySelector('.list .header div #date').innerHTML = date.toDateString()
     const assList = document.querySelector('.assContainer #assigmentList')
     let temp = ""
-
 
     assignments.forEach((courseWorks) => {
         const {courseWork} = courseWorks;
@@ -298,8 +303,23 @@ function displayAssignments() {
             assList.innerHTML = temp;
         })
     })
-     counter.innerHTML = "Total: " + assList.childElementCount;
-    if (assList.childElementCount <= 1) {
-        console.log("almost empty!")
-    }
+    counter.innerHTML = "Total: " + assList.childElementCount;
+}
+
+function filters() {
+    const filter = document.querySelector('.inputContainer select')
+    let temp = ""
+
+    temp += '<optgroup label="Classes"></optgroup>"';
+    temp += '<option value="Filters" hidden >Filters</option>';
+    temp += '<option value="" >All</option>';
+    const {courses} = coursesData;
+    courses.forEach((course) => {
+        temp += `<option value ="${course['id']}">${course['name']}</option>`
+        filter.innerHTML = temp;
+    })
+}
+
+function filterChanged() {
+    console.log(document.querySelector(".inputContainer select").value)
 }

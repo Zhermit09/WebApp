@@ -73,3 +73,5 @@ ________________________________________________________________________________
 
 10/5
     Changed styles of the objects
+17/5
+    Started working on filtering
