@@ -75,3 +75,8 @@ ________________________________________________________________________________
     Changed styles of the objects
 17/5
     Started working on filtering
+19/5
+    Finshed filtering and search functions, they are a mess codewise but seem to work.
+    Added loader spinner.
+    Created list with objects of assigments with all the propperties i want, now can easily add more if needed.
+    Btw "React" who? "JQuery" who?

@@ -23,7 +23,10 @@ function urlElementsCheck() {
         console.log("You have the token");
     }
     location.hash = "";
-    courseFetch().then(() => displayAssignments());
+    courseFetch().then(() => {
+        filterChanged()
+        document.querySelector('.loader').remove()
+    });
     calendar();
 }
 
@@ -53,7 +56,7 @@ async function courseFetch() {
     } catch (error) {
         console.error(error);
     }
-    filters();
+    addFilters();
     await assigmentFetch();
 }
 
@@ -114,29 +117,33 @@ async function statusFetch() {
     createObj()
 }
 
-let ObjArr = [];
+let timedAssignments = [];
 
 function createObj() {
+
+    let i = 0;
 
     assignments.forEach((courseWorks) => {
         const {courseWork} = courseWorks;
         courseWork.forEach((workData) => {
-            ObjArr.push(
-                {
-                    Title: workData['title'],
-                    Link: workData['alternateLink'],
-                    CourseID: workData['courseId'],
-                    DueDate: workData['dueDate'],
-                    DueTime: workData['dueTime'],
-                    AssigmentID: workData['id'],
-                    Late: submissions[0]['studentSubmissions'][0]['late'],
-                    State: submissions[0]['studentSubmissions'][0]['state']
-
-                })
+            if (workData['dueDate'] !== undefined) {
+                timedAssignments.push(
+                    {
+                        Title: workData['title'],
+                        Link: workData['alternateLink'],
+                        CourseID: workData['courseId'],
+                        DueDate: workData['dueDate'],
+                        DueTime: workData['dueTime'],
+                        AssigmentID: workData['id'],
+                        Late: submissions[i]['studentSubmissions'][0]['late'],
+                        State: submissions[i]['studentSubmissions'][0]['state']
+                    })
+                i++;
+            }
         })
     })
-        console.log("yeet____________________\n");
-    console.log(ObjArr)
+    console.log("yeet____________________\n");
+    console.log(timedAssignments)
 
 }
 
@@ -291,35 +298,131 @@ const counter = document.querySelector('.list .header div #counter')
 counter.innerHTML = "Total: "
 
 //---------------------------------------------------------------------------------------------
-function displayAssignments() {
-    document.querySelector('.list .header div #date').innerHTML = date.toDateString()
-    const assList = document.querySelector('.assContainer #assigmentList')
-    let temp = ""
-
-    assignments.forEach((courseWorks) => {
-        const {courseWork} = courseWorks;
-        courseWork.forEach((workData) => {
-            temp += `<li class="assigment">${workData['title']}</li>`
-            assList.innerHTML = temp;
-        })
-    })
-    counter.innerHTML = "Total: " + assList.childElementCount;
-}
-
-function filters() {
+function addFilters() {
     const filter = document.querySelector('.inputContainer select')
     let temp = ""
 
+
     temp += '<optgroup label="Classes"></optgroup>"';
-    temp += '<option value="Filters" hidden >Filters</option>';
+    temp += '<option value="" hidden >Filters</option>';
     temp += '<option value="" >All</option>';
     const {courses} = coursesData;
     courses.forEach((course) => {
         temp += `<option value ="${course['id']}">${course['name']}</option>`
-        filter.innerHTML = temp;
     })
+    filter.innerHTML = temp;
 }
 
+function displayAllAssignments() {
+    document.querySelector('.list .header div #date').innerHTML = date.toDateString()
+    const assList = document.querySelector('.assContainer #assigmentList')
+    const container = document.querySelector('.assContainer ')
+    let temp = ""
+    let title = ""
+
+    timedAssignments.forEach((ass) => {
+        title = ass['Title']
+        if (ass['Title'].length > 110) {
+            title = ass['Title'].slice(0, 110) + "..."
+        }
+        temp += `<li class="assigment">${title}</li>`
+    })
+    assList.innerHTML = temp;
+    if (assList.childElementCount === 0) {
+        let element = document.createElement('p')
+        element.setAttribute("class", "empty")
+        element.appendChild(document.createTextNode("Empty"))
+        container.appendChild(element);
+        assList.innerHTML = "";
+    }
+    counter.innerHTML = "Total: " + assList.childElementCount
+}
+
+
 function filterChanged() {
-    console.log(document.querySelector(".inputContainer select").value)
+    const courseID = document.querySelector(".inputContainer select").value;
+    const assList = document.querySelector('.assContainer #assigmentList');
+    const container = document.querySelector('.assContainer ');
+    const element = document.querySelector('.empty');
+
+    if (element !== null) {
+        container.removeChild(element);
+    }
+    assList.innerHTML = "";
+
+    let filterChangedTemp = ""
+    let title = ""
+
+    timedAssignments.forEach((ass) => {
+        if (courseID === ass['CourseID']) {
+            title = ass['Title']
+            if (ass['Title'].length > 110) {
+                title = ass['Title'].slice(0, 110) //+ ". . ."
+            }
+            filterChangedTemp += `<li class="assigment">${title}</li>`
+
+        }
+    })
+    assList.innerHTML = filterChangedTemp;
+    if (courseID === "") {
+        displayAllAssignments();
+    }
+    if (assList.childElementCount === 0 && document.querySelector('.empty') === null) {
+        let element = document.createElement('p')
+        element.setAttribute("class", "empty")
+        element.appendChild(document.createTextNode("Empty"))
+        container.appendChild(element);
+    }
+    counter.innerHTML = "Total: " + assList.childElementCount;
+}
+
+
+function search() {
+    const value = document.querySelector('#inputField')
+
+    /* value.addEventListener('keyup', (e) => {
+         if (e.key === 'Enter') {*/
+    filterChanged();
+    const element = document.querySelector('.empty');
+    const container = document.querySelector('.assContainer ');
+    let assList = document.querySelector('#assigmentList');
+    const titles = document.querySelectorAll('#assigmentList li')
+
+    if (element !== null) {
+        container.removeChild(element);
+    }
+
+
+    let searchResults = [];
+
+    titles.forEach((item) => {
+        if (item.innerHTML.search(value.value) > -1) {
+            timedAssignments.forEach((ass) => {
+                if (ass['Title'].search(item.innerHTML) > -1) {
+                    searchResults.push(ass)
+                }
+            })
+        }
+    })
+    let temp = "";
+    let title = "";
+
+    searchResults.forEach((result) => {
+        title = result['Title']
+        if (result['Title'].length > 110) {
+            title = result['Title'].slice(0, 110) + "..."
+        }
+        temp += `<li class="assigment">${title}</li>`
+    })
+    assList.innerHTML = temp;
+    counter.innerHTML = "Total: " + searchResults.length;
+    if (searchResults.length === 0 && document.querySelector('.empty') === null) {
+        let element = document.createElement('p')
+        element.setAttribute("class", "empty")
+        element.appendChild(document.createTextNode("Empty"))
+        container.appendChild(element);
+    }
+    if (value.value === "") {
+        filterChanged()
+    }
 }
