@@ -14,7 +14,7 @@ let scope = "https://www.googleapis.com/auth/classroom.coursework.me.readonly&" 
 function urlElementsCheck() {
     token = JSON.parse(sessionStorage.getItem("Token"));
     if (token === null) {
-        sessionStorage.setItem("Token", JSON.stringify(new URLSearchParams(window.location).get('access_token')));
+        sessionStorage.setItem("Token", JSON.stringify(new URLSearchParams(window.location.hash).get('access_token')));
         token = JSON.parse(sessionStorage.getItem("Token"));
         if (token === null) {
             OAuth20();
