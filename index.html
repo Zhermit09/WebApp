@@ -7,35 +7,16 @@
     <link rel=icon type="image/png" href="./images/NGNL.png">
     <title>Tasker</title>
 </head>
+<header>
+    <h1>Tasker</h1>
+    <i class="fas fa-sync fa-3x" onclick="update()"></i>
+</header>
 <body>
 <main>
-    <div class="calendarContainer">
-        <div class="calendar">
-            <div class="header">
-                <i class="fas fa-angle-left fa-2x prev"></i>
-                <div class="date">
-                    <h1></h1>
-                    <p></p>
-                </div>
-                <i class="fas fa-angle-right fa-2x next"> </i>
-            </div>
-            <div class="weekdays">
-                <div id="sp">Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
-                <div>Sun</div>
-            </div>
-            <div class="days">
-            </div>
-        </div>
-    </div>
     <div class="listContainer">
         <div class="list">
             <div class="header">
-                <i class="fa fa-plus fa-plus fa-2x add"></i>
+                <i class="fa fa-trash-alt fa-2x add" onclick="addFilters(); displayAllAssignments()"></i>
                 <h1>Assignments</h1>
                 <div>
                     <p id="counter"></p>
@@ -60,6 +41,30 @@
                     <ul id="assigmentList">
                     </ul>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="calendarContainer">
+        <div class="calendar">
+            <div class="header">
+                <i class="fas fa-angle-left fa-2x prev"></i>
+                <div class="date">
+                    <h1></h1>
+                    <p></p>
+                </div>
+                <i class="fas fa-angle-right fa-2x next"> </i>
+            </div>
+            <div class="weekdays">
+                <div id="sp">Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+                <div>Sun</div>
+            </div>
+            <div class="days">
+                <div class="loader"></div>
             </div>
         </div>
     </div>

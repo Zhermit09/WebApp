@@ -1,14 +1,15 @@
 //@ts-check
 "use strict";
+let coursesData = JSON.parse(localStorage.getItem("coursesData"));
+let assignments = JSON.parse(localStorage.getItem("assignments"));
+let submissions = JSON.parse(localStorage.getItem("submissions"));
+let timedAssignments = [];
+
 window.onload = () => urlElementsCheck();
 let token;
 let header;
-
 let scope = "https://www.googleapis.com/auth/classroom.coursework.me.readonly&" +
     "https://www.googleapis.com/auth/classroom.coursework.students.readonly&";
-
-let assignments;
-let coursesData;
 
 function urlElementsCheck() {
     token = JSON.parse(sessionStorage.getItem("Token"));
@@ -16,18 +17,27 @@ function urlElementsCheck() {
         sessionStorage.setItem("Token", JSON.stringify(new URLSearchParams(window.location.hash).get('access_token')));
         token = JSON.parse(sessionStorage.getItem("Token"));
         if (token === null) {
-            console.log("You don't have the token")
             OAuth20();
         }
-    } else {
-        console.log("You have the token");
     }
     location.hash = "";
-    courseFetch().then(() => {
-        filterChanged()
+    if (coursesData === null || assignments === null || submissions === null) {
+        courseFetch().then(() => {
+            filterChanged();
+            document.querySelector('.loader').remove()
+            document.querySelector('.loader').remove()
+            calendar();
+
+        });
+    } else {
+        addFilters();
+        createObj();
+        filterChanged();
         document.querySelector('.loader').remove()
-    });
-    calendar();
+        document.querySelector('.loader').remove()
+        calendar();
+        update();
+    }
 }
 
 function OAuth20() {
@@ -40,6 +50,28 @@ function OAuth20() {
         "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com");
 }
 
+function update() {
+    const spinner = document.querySelector('header i')
+    spinner.style.animation = "spin 1.5s linear infinite"
+
+    coursesData = [];
+    assignments = [];
+    submissions = [];
+    timedAssignments = [];
+
+    courseFetch().then(() => {
+
+        filterChanged();
+        try {
+            document.querySelector('.loader').remove()
+            document.querySelector('.loader').remove()
+        } catch (e) {
+        }
+
+        calendar();
+        spinner.style.animation = "none"
+    });
+}
 
 async function courseFetch() {
     token = JSON.parse(sessionStorage.getItem("Token"));
@@ -52,19 +84,18 @@ async function courseFetch() {
             headers: header
         });
         coursesData = await response.json();
-        console.log(coursesData);
     } catch (error) {
         console.error(error);
     }
     addFilters();
+    localStorage.setItem("coursesData", JSON.stringify(coursesData));
     await assigmentFetch();
 }
 
-let BATCH;
 
 async function assigmentFetch() {
     let class_id = "";
-    BATCH = [];
+    let BATCH = [];
     const {courses} = coursesData
     try {
         courses.forEach((courseSp) => {
@@ -83,12 +114,11 @@ async function assigmentFetch() {
     } catch (error) {
         console.error(error);
     }
-    console.log(assignments)
+    localStorage.setItem("assignments", JSON.stringify(assignments));
     await statusFetch();
 }
 
 let assBatch;
-let submissions;
 
 
 async function statusFetch() {
@@ -113,38 +143,44 @@ async function statusFetch() {
         console.error(error);
     }
     submissions = await Promise.all(assBatch);
-    console.log(submissions)
+    localStorage.setItem("submissions", JSON.stringify(submissions));
     createObj()
 }
 
-let timedAssignments = [];
 
 function createObj() {
-
-    let i = 0;
-
+    let lateTemp;
     assignments.forEach((courseWorks) => {
         const {courseWork} = courseWorks;
         courseWork.forEach((workData) => {
             if (workData['dueDate'] !== undefined) {
-                timedAssignments.push(
-                    {
-                        Title: workData['title'],
-                        Link: workData['alternateLink'],
-                        CourseID: workData['courseId'],
-                        DueDate: workData['dueDate'],
-                        DueTime: workData['dueTime'],
-                        AssigmentID: workData['id'],
-                        Late: submissions[i]['studentSubmissions'][0]['late'],
-                        State: submissions[i]['studentSubmissions'][0]['state']
-                    })
-                i++;
+                submissions.forEach((submission) => {
+                    try {
+                        if (workData['id'] === submission['studentSubmissions'][0]['courseWorkId']) {
+                            lateTemp = (submission['studentSubmissions'][0]['late'] === undefined) ? false : submission['studentSubmissions'][0]['late'];
+                            timedAssignments.push(
+                                {
+                                    Title: workData['title'],
+                                    Link: workData['alternateLink'],
+                                    CourseID: workData['courseId'],
+
+                                    DueDate: workData['dueDate'],
+
+                                    DueTime: workData['dueTime'],
+
+                                    AssigmentID: workData['id'],
+                                    Late: lateTemp,
+                                    State: submission['studentSubmissions'][0]['state']
+                                })
+                        }
+                    } catch (e) {
+
+                    }
+
+                })
             }
         })
     })
-    console.log("yeet____________________\n");
-    console.log(timedAssignments)
-
 }
 
 //---------------------------------------------------------------------------------------------
@@ -152,7 +188,9 @@ const date = new Date();
 document.querySelector('.list .header div #date').innerHTML = date.toDateString()
 
 function calendar() {
-    if (date.getMonth() === new Date().getMonth()) date.setDate(new Date().getDate())
+    if (date.getMonth() === new Date().getMonth()) {
+        date.setDate(new Date().getDate())
+    }
 
     const calMonth = document.querySelector(".date h1");
     const calFullDate = document.querySelector(".date p");
@@ -171,40 +209,65 @@ function calendar() {
     const lMonthLDay = new Date(date.getFullYear(), date.getMonth(), 0);
     const prevDate = (lMonthLDay.getDate() - (lMonthLDay.getDay() - 1));
     let nextDate = 7 - monthLDay.getDay();
+    let counter;
 
 
     calMonth.innerHTML = months[date.getMonth()]
     calFullDate.innerHTML = date.toDateString()
     for (let k = prevDate; k <= lMonthLDay.getDate(); k++) {
-        days += `<div class="otherDate">${k}</div>`;
+        counter = assignmentCounter(k, date.getMonth(), date.getFullYear())
+        days += `<div class="otherDate">${k}<div class="assCounter">${counter}</div></div>`;
         calDays.innerHTML = days;
     }
     for (let i = 1; i <= monthLDay.getDate(); i++) {
+        counter = assignmentCounter(i, (date.getMonth() + 1), date.getFullYear());
         if (i === date.getDate() && date.getMonth() === new Date().getMonth() && new Date().getFullYear() === date.getFullYear()) {
-            days += `<div class="today">${i}</div>`;
+            days += `<div class="today">${i}<div class="assCounter">${counter}</div></div>`;
         } else if (i === date.getDate() && date.getMonth() === new Date().getMonth()) {
-            days += `<div class="otherToday">${i}</div>`;
+            days += `<div class="otherToday">${i}<div class="assCounter">${counter}</div></div>`;
         } else {
-
-            days += `<div class="nDay" class="2x">${i}</div>`;
-            calDays.innerHTML = days;
-
+            days += `<div class="nDay">${i}<div class="assCounter">${counter}</div></div>`;
         }
+        calDays.innerHTML = days;
     }
-
     if (lMonthLDay.getDay() + monthLDay.getDate() < 35) nextDate += 7;
     for (let j = 1; j <= nextDate; j++) {
-        days += `<div class="otherDate">${j}</div>`;
+        counter = assignmentCounter(j, (date.getMonth() + 2), date.getFullYear());
+        days += `<div class="otherDate">${j}<div class="assCounter">${counter}</div></div>`;
         calDays.innerHTML = days;
     }
     colorChange();
 }
 
+function assignmentCounter(dayC, monthC, yearC) {
+    let counter = 0;
+    if (monthC > 12) {
+        monthC = 1;
+        yearC++;
+    } else if (monthC < 1) {
+        monthC = 12;
+        yearC--;
+    }
+    timedAssignments.forEach((ass) => {
+        const {DueDate} = ass;
+        if (DueDate['year'] === yearC && DueDate['month'] === monthC && DueDate['day'] === dayC) {
+            counter++;
+        }
+    })
+    if (counter !== 0) {
+        return counter
+    } else {
+        return "";
+    }
+
+}
+
 function colorChange() {
-    const daysBorder = document.querySelectorAll(".days div")
+    const daysBorder = document.querySelectorAll(".days div:not(.assCounter)")
     const element = [
         document.querySelector(".header h1"),
         document.querySelector(".header p"),
+        document.querySelector(".date"),
         document.querySelector(".next"),
         document.querySelector(".prev")]
 
@@ -280,7 +343,7 @@ document.querySelector(".next")
     })
 
 document.querySelector('.days').addEventListener("mouseover", (hover) => {
-    if (hover.target.innerHTML.length <= 2 && hover.target.innerHTML >= 1) {
+    if (!hover.target.classList.contains('days') && !hover.target.classList.contains('assCounter')) {
         let targetDate = date
         targetDate.setDate(parseInt(hover.target.innerHTML))
         document.querySelector(".date p").innerHTML = targetDate.toDateString()
@@ -293,6 +356,47 @@ document.querySelector('.days').addEventListener("mouseover", (hover) => {
         })
     }
 })
+document.querySelector('.days').addEventListener("click", (e) => {
+    if (!e.target.classList.contains('days') && !e.target.classList.contains('assCounter')) {
+
+        calendarDayFilter()
+    }
+})
+
+function calendarDayFilter() {
+    let filterDate = date
+    const assList = document.querySelector('.assContainer #assigmentList');
+    const container = document.querySelector('.assContainer ');
+    const element = document.querySelector('.empty');
+
+    let title = "";
+    let temp = "";
+    if (element !== null) {
+        container.removeChild(element);
+    }
+    timedAssignments.forEach((ass) => {
+        const {DueDate} = ass
+        if (DueDate['year'] === filterDate.getFullYear() &&
+            DueDate['month'] === (filterDate.getMonth() + 1) &&
+            DueDate['day'] === filterDate.getDate()) {
+
+            title = ass['Title']
+            if (ass['Title'].length > 110) {
+                title = ass['Title'].slice(0, 110) //+ ". . ."
+            }
+            temp += `<li class="assigment">${title}</li>`
+        }
+    })
+    assList.innerHTML = temp;
+
+    if (assList.childElementCount === 0 && document.querySelector('.empty') === null) {
+        let element = document.createElement('p')
+        element.setAttribute("class", "empty")
+        element.appendChild(document.createTextNode("Empty"))
+        container.appendChild(element);
+    }
+    counter.innerHTML = "Total: " + assList.childElementCount;
+}
 
 const counter = document.querySelector('.list .header div #counter')
 counter.innerHTML = "Total: "
@@ -302,11 +406,12 @@ function addFilters() {
     const filter = document.querySelector('.inputContainer select')
     let temp = ""
 
-
+    //20 ch
     temp += '<optgroup label="Classes"></optgroup>"';
     temp += '<option value="" hidden >Filters</option>';
     temp += '<option value="" >All</option>';
-    const {courses} = coursesData;
+    let {courses} = coursesData;
+    courses = (courses === undefined || courses === null) ? coursesData : courses
     courses.forEach((course) => {
         temp += `<option value ="${course['id']}">${course['name']}</option>`
     })
@@ -323,7 +428,7 @@ function displayAllAssignments() {
     timedAssignments.forEach((ass) => {
         title = ass['Title']
         if (ass['Title'].length > 110) {
-            title = ass['Title'].slice(0, 110) + "..."
+            title = ass['Title'].slice(0, 110) //+ "..."
         }
         temp += `<li class="assigment">${title}</li>`
     })
@@ -378,15 +483,15 @@ function filterChanged() {
 
 
 function search() {
-    const value = document.querySelector('#inputField')
-
-    /* value.addEventListener('keyup', (e) => {
-         if (e.key === 'Enter') {*/
     filterChanged();
     const element = document.querySelector('.empty');
     const container = document.querySelector('.assContainer ');
-    let assList = document.querySelector('#assigmentList');
+    const assList = document.querySelector('#assigmentList');
     const titles = document.querySelectorAll('#assigmentList li')
+    const magnifyingGlas = document.querySelector('label i')
+    const value = document.querySelector('#inputField')
+
+    magnifyingGlas.style.visibility = "hidden";
 
     if (element !== null) {
         container.removeChild(element);
@@ -396,7 +501,7 @@ function search() {
     let searchResults = [];
 
     titles.forEach((item) => {
-        if (item.innerHTML.search(value.value) > -1) {
+        if (item.innerHTML.toLowerCase().search(value.value.toLowerCase()) > -1) {
             timedAssignments.forEach((ass) => {
                 if (ass['Title'].search(item.innerHTML) > -1) {
                     searchResults.push(ass)
@@ -410,7 +515,7 @@ function search() {
     searchResults.forEach((result) => {
         title = result['Title']
         if (result['Title'].length > 110) {
-            title = result['Title'].slice(0, 110) + "..."
+            title = result['Title'].slice(0, 110) //+ "..."
         }
         temp += `<li class="assigment">${title}</li>`
     })
@@ -423,6 +528,67 @@ function search() {
         container.appendChild(element);
     }
     if (value.value === "") {
+        magnifyingGlas.style.visibility = "visible";
         filterChanged()
     }
 }
+
+document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
+    if (e.target.classList.contains('assigmentDetails')) {
+        e = e.target
+        while (e.id !== 'assigmentDetails') {
+            e = e.parentElement
+        }
+        e = e.parentElement
+    } else {
+        e = e.target
+    }
+    if (e.style.height === "" || e.style.height === "4rem") {
+        window.getSelection().removeAllRanges();
+        let subject;
+        e.style.height = "23rem"
+        e.style.textAlign = "center"
+
+        timedAssignments.forEach((ass) => {
+            const {courses} = coursesData;
+            courses.forEach((course) => {
+                if (course['id'] === ass['CourseID']) {
+                    subject = course['name']
+                }
+            })
+
+            if (ass['Title'].search(e.innerHTML) > -1) {
+                e.innerHTML = `${ass['Title']}<div id="assigmentDetails" class="assigmentDetails">
+                <p class="assigmentDetails">Details</p>
+                <div class="assigmentDetails">
+                    <div class="assigmentDetails"><p class="assigmentDetails">Subject:</p> 
+                    <p1 class="assigmentDetails">${subject}</p1></div>
+                    <div class="assigmentDetails"><p class="assigmentDetails">Deadline:</p> 
+                    <p1 class="assigmentDetails">${ass['DueDate']['day']}/${ass['DueDate']['month']}/${ass['DueDate']['year']}</p1></div>
+               </div>
+               <div class="assigmentDetails">
+                    <div class="assigmentDetails"><p class="assigmentDetails">ID:</p> 
+                    <p1 class="assigmentDetails">${ass['AssigmentID']}</p1></div>
+                    <div class="assigmentDetails"><p class="assigmentDetails">Due time:</p>
+                     <p1 class="assigmentDetails">${ass['DueTime']['hours']}:${ass['DueTime']['minutes']}</p1></div>
+               </div>                  
+               <div class="assigmentDetails">
+                    <div class="assigmentDetails"><p class="assigmentDetails">Late:</p> 
+                    <p1 class="assigmentDetails">${ass['Late']}</p1></div>
+                    <div class="assigmentDetails"><p class="assigmentDetails">State:</p> 
+                    <p1 class="assigmentDetails">${ass['State']}</p1></div>
+               </div>
+                    <a class="assigmentDetails" target="_blank" href="${ass['Link']}">Submit now</a> 
+            </div>`
+            }
+        })
+    } else if (e.style.height === "23rem") {
+        window.getSelection().removeAllRanges();
+        let details = document.querySelector('#assigmentDetails')
+        if (details !== null) {
+            details.remove()
+        }
+        e.style.textAlign = "left"
+        e.style.height = "4rem"
+    }
+})

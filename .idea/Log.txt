@@ -80,3 +80,4 @@ ________________________________________________________________________________
     Added loader spinner.
     Created list with objects of assigments with all the propperties i want, now can easily add more if needed.
     Btw "React" who? "JQuery" who?
+    !!!Might replace forEach() with every() to break out of it whenever done
