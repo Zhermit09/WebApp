@@ -46,7 +46,7 @@ function OAuth20() {
         "include_granted_scopes=true&" +
         "response_type=token&" +
         "state=state_parameter_passthrough_value&" +
-        "redirect_uri=https://zhermit09.github.io/WebApp/&" +
+        "redirect_uri=http://localhost:63342/WebApp/index.html&" +
         "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com");
 }
 
@@ -77,6 +77,7 @@ async function courseFetch() {
     token = JSON.parse(sessionStorage.getItem("Token"));
     header = new Headers();
     header.append('Authorization', `Bearer ${token}`);
+    console.log(header)
     coursesData = [];
     try {
         const response = await fetch('https://classroom.googleapis.com/v1/courses', {
