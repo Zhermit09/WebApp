@@ -8,7 +8,8 @@ let timedAssignments = [];
 window.onload = () => urlElementsCheck();
 let token;
 let header;
-let scope = "https://www.googleapis.com/auth/classroom.coursework.me.readonly&" +
+let scope = "https://www.googleapis.com/auth/classroom.courses&" +
+    "https://www.googleapis.com/auth/classroom.coursework.me.readonly&" +
     "https://www.googleapis.com/auth/classroom.coursework.students.readonly&";
 
 function urlElementsCheck() {
