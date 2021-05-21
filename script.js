@@ -20,7 +20,7 @@ function urlElementsCheck() {
             OAuth20();
         }
     }
-    location.hash = "";
+   // location.hash = "";
     if (coursesData === null || assignments === null || submissions === null) {
         courseFetch().then(() => {
             filterChanged();
