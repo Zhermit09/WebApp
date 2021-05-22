@@ -48,11 +48,11 @@ function OAuth20() {
         "include_granted_scopes=true&" +
         "response_type=token&" +
         "state=state_parameter_passthrough_value&" +
-        "redirect_uri=https://zhermit09.github.io/WebApp/&" +
+        "redirect_uri=http://localhost:63342/WebApp/index.html&" +
         "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com");
 }
 
-//  http://localhost:63342/WebApp/index.html
+//  https://zhermit09.github.io/WebApp/
 
 function update() {
     const spinner = document.querySelector('header i')
@@ -337,7 +337,7 @@ function colorChange() {
     daysBorder.forEach((div) => {
         div = div.children[0]
         if (div.innerHTML === "") {
-            div.style.backgroundColor = "rgba(0,0,0,0)";
+            div.style.background = "rgba(0,0,0,0)";
         }
     })
 }
@@ -361,7 +361,13 @@ document.querySelector('.days').addEventListener("mouseover", (hover) => {
     if (!hover.target.classList.contains('days') && !hover.target.classList.contains('assCounter')) {
         let targetDate = date
         targetDate.setDate(parseInt(hover.target.innerHTML))
+
+        let dateTemp = targetDate;
+        dateTemp.setMonth(dateTemp.getMonth()-1)
+
         document.querySelector(".date p").innerHTML = targetDate.toDateString()
+        console.log(dateTemp.toDateString())
+
         hover.target.addEventListener("mouseleave", () => {
             if (date.getMonth() === new Date().getMonth()) date.setDate(new Date().getDate())
             else {
@@ -373,13 +379,19 @@ document.querySelector('.days').addEventListener("mouseover", (hover) => {
 })
 document.querySelector('.days').addEventListener("click", (e) => {
     if (!e.target.classList.contains('days') && !e.target.classList.contains('assCounter')) {
-
+        if (e.target.classList.contains('otherDate')) {
+            let month = (parseInt(e.target.innerHTML) > 15) ? date.getMonth() - 1 : date.getMonth() + 1
+            month = (month > 11) ? 0 : month
+            month = (month < 0) ? 11 : month
+            console.log(month)
+        }
         calendarDayFilter()
     }
 })
 
 function calendarDayFilter() {
     let filterDate = date
+
     const assList = document.querySelector('.assContainer #assigmentList');
     const container = document.querySelector('.assContainer ');
     const element = document.querySelector('.empty');
