@@ -675,7 +675,7 @@ label i {
 }
 @media screen and (min-width: 769px) and (max-width: 1024px) {
     html{
-        font-size: 62.5%;
+        font-size: 52.5%;
     }
 }
 @media screen and (min-width: 2500px) {
