@@ -1,5 +1,6 @@
 //@ts-check
 "use strict";
+
 let coursesData = JSON.parse(localStorage.getItem("coursesData"));
 let assignments = JSON.parse(localStorage.getItem("assignments"));
 let submissions = JSON.parse(localStorage.getItem("submissions"));
@@ -335,7 +336,7 @@ function colorChange() {
     }
     daysBorder.forEach((div) => {
         div = div.children[0]
-        if(div.innerHTML===""){
+        if (div.innerHTML === "") {
             div.style.backgroundColor = "rgba(0,0,0,0)";
         }
     })
