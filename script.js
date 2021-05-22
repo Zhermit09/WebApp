@@ -47,9 +47,11 @@ function OAuth20() {
         "include_granted_scopes=true&" +
         "response_type=token&" +
         "state=state_parameter_passthrough_value&" +
-        "redirect_uri=https://zhermit09.github.io/WebApp/&" +
+        "redirect_uri=http://localhost:63342/WebApp/index.html&" +
         "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com");
 }
+
+//  https://zhermit09.github.io/WebApp/
 
 function update() {
     const spinner = document.querySelector('header i')
@@ -78,7 +80,6 @@ async function courseFetch() {
     token = JSON.parse(sessionStorage.getItem("Token"));
     header = new Headers();
     header.append('Authorization', `Bearer ${token}`);
-    console.log(header)
     coursesData = [];
     try {
         const response = await fetch('https://classroom.googleapis.com/v1/courses', {
@@ -219,8 +220,9 @@ function calendar() {
     for (let k = prevDate; k <= lMonthLDay.getDate(); k++) {
         counter = assignmentCounter(k, date.getMonth(), date.getFullYear())
         days += `<div class="otherDate">${k}<div class="assCounter">${counter}</div></div>`;
-        calDays.innerHTML = days;
     }
+    calDays.innerHTML = days;
+
     for (let i = 1; i <= monthLDay.getDate(); i++) {
         counter = assignmentCounter(i, (date.getMonth() + 1), date.getFullYear());
         if (i === date.getDate() && date.getMonth() === new Date().getMonth() && new Date().getFullYear() === date.getFullYear()) {
@@ -230,14 +232,18 @@ function calendar() {
         } else {
             days += `<div class="nDay">${i}<div class="assCounter">${counter}</div></div>`;
         }
-        calDays.innerHTML = days;
     }
+    calDays.innerHTML = days;
+
     if (lMonthLDay.getDay() + monthLDay.getDate() < 35) nextDate += 7;
     for (let j = 1; j <= nextDate; j++) {
         counter = assignmentCounter(j, (date.getMonth() + 2), date.getFullYear());
         days += `<div class="otherDate">${j}<div class="assCounter">${counter}</div></div>`;
-        calDays.innerHTML = days;
+
     }
+    calDays.innerHTML = days;
+
+
     colorChange();
 }
 
@@ -327,6 +333,12 @@ function colorChange() {
             })
             break;
     }
+    daysBorder.forEach((div) => {
+        div = div.children[0]
+        if(div.innerHTML===""){
+            div.style.backgroundColor = "rgba(0,0,0,0)";
+        }
+    })
 }
 
 document.querySelector(".prev")
@@ -580,7 +592,7 @@ document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
                     <div class="assigmentDetails"><p class="assigmentDetails">State:</p> 
                     <p1 class="assigmentDetails">${ass['State']}</p1></div>
                </div>
-                    <a class="assigmentDetails" target="_blank" href="${ass['Link']}">Submit now</a> 
+                    <a class="assigmentDetails" target="_blank" href="${ass['Link']}">To Assigment</a> 
             </div>`
             }
         })

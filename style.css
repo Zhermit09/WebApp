@@ -15,7 +15,7 @@ html {
     font-family: 'Audiowide', sans-serif;
 }
 
-header{
+header {
     background: radial-gradient(rgb(255, 255, 255), #2d2b28 27%, #070707);
     border-bottom: 0.2rem solid red;
     margin-bottom: 4em;
@@ -39,7 +39,7 @@ header h1 {
 
 }
 
-header i{
+header i {
     position: relative;
     right: 3rem;
     justify-self: flex-end;
@@ -47,8 +47,13 @@ header i{
     background: linear-gradient(#322b2b, #ff0000, #2f2727) no-repeat;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-   /* animation:spin 1.5s linear infinite ;*/
- }
+    /* animation:spin 1.5s linear infinite ;*/
+}
+
+header i:hover {
+    -webkit-text-stroke: 0.03em #b6b6b6;
+    cursor: pointer;
+}
 
 main {
     display: flex;
@@ -222,8 +227,10 @@ div .today:not(.assCounter) {
     height: 1rem;
     padding: 0.6rem;
     border-radius: 100%;
-    color: rgba(8, 255, 0, 0.9);
-    text-shadow: 0 0 0.4rem #000000;
+    background-color: rgba(26, 255, 0, 0.9);
+    color: rgb(255, 255, 255);
+    -webkit-text-stroke: 0.06em #000000;
+    text-shadow: 0 0 0.1rem black;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -248,9 +255,10 @@ div .today:not(.assCounter) {
 }
 
 
-.header i:hover, .header i:hover {
+.header i:hover {
     color: #9c9c9c;
     text-shadow: 0 0.3rem 0.3rem rgba(0, 0, 0, 0.5);
+    cursor: pointer;
 }
 
 
@@ -294,6 +302,7 @@ div .today:not(.assCounter) {
 
 .list .header i:hover {
     opacity: 0.8;
+    cursor: pointer;
 }
 
 .list .header i:active {
@@ -387,7 +396,10 @@ div .today:not(.assCounter) {
 .inputContainer input:hover {
     border-color: #9c9c9c;
     color: #ffffff;
+}
 
+.inputContainer select:hover {
+    cursor: pointer;
 }
 
 .inputContainer select optgroup {
@@ -544,7 +556,7 @@ label i {
     overflow-wrap: anywhere;
     text-align: right;
     color: red;
-    text-shadow: 0 0 1rem rgba(255, 255, 255,0.4);
+    text-shadow: 0 0 1rem rgba(255, 255, 255, 0.4);
 }
 
 #assigmentDetails a {
@@ -633,5 +645,41 @@ label i {
     }
     100% {
         transform: rotate(360deg);
+    }
+}
+
+
+@media screen and (max-width: 375px) {
+    html{
+        font-size: 42.5%;
+    }
+    main {
+        flex-direction: column;
+    }
+}
+@media screen and (min-width: 376px) and (max-width: 425px) {
+    html{
+        font-size: 52.5%;
+    }
+    main {
+        flex-direction: column;
+    }
+}
+@media screen and (min-width: 426px) and (max-width: 768px) {
+    html{
+        font-size: 85%;
+    }
+    main {
+        flex-direction: column;
+    }
+}
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    html{
+        font-size: 62.5%;
+    }
+}
+@media screen and (min-width: 2500px) {
+    html{
+        font-size: 120%;
     }
 }
