@@ -1,142 +1,148 @@
 //@ts-check
+// noinspection SpellCheckingInspection
+
 "use strict";
+window.onload = () => tokenCheck();
 
-let coursesData = JSON.parse(localStorage.getItem("coursesData"));
-let assignments = JSON.parse(localStorage.getItem("assignments"));
-let submissions = JSON.parse(localStorage.getItem("submissions"));
-let timedAssignments = [];
+//Scope for the Authentication thingy
+const scope = "https://www.googleapis.com/auth/classroom.courses&" + "https://www.googleapis.com/auth/classroom.coursework.me.readonly&" + "https://www.googleapis.com/auth/classroom.coursework.students.readonly&";
+const OAuth20 = "https://accounts.google.com/o/oauth2/v2/auth?" + `scope=${scope}` + "include_granted_scopes=true&" + "response_type=token&" + "state=state_parameter_passthrough_value&" + "redirect_uri=https://zhermit09.github.io/WebApp/&" + "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
+let header = new Headers()
+let token
 
-window.onload = () => urlElementsCheck();
-let token;
-let header;
-let scope = "https://www.googleapis.com/auth/classroom.courses&" +
-    "https://www.googleapis.com/auth/classroom.coursework.me.readonly&" +
-    "https://www.googleapis.com/auth/classroom.coursework.students.readonly&";
+let coursesData = []
+let assignments = []
+let submissions = []
+let timedAssignments = []
 
-function urlElementsCheck() {
+const spinner = document.querySelector('header i');
+
+function tokenCheck() {
+    //2 step check for session token
     token = JSON.parse(sessionStorage.getItem("Token"));
     if (token === null) {
         sessionStorage.setItem("Token", JSON.stringify(new URLSearchParams(window.location.hash).get('access_token')));
         token = JSON.parse(sessionStorage.getItem("Token"));
         if (token === null) {
-            OAuth20();
+            window.location.replace(OAuth20);
         }
     }
+    //Clean the link
     location.hash = "";
-    if (coursesData === null || assignments === null || submissions === null) {
-        courseFetch().then(() => {
-            filterChanged();
-            document.querySelector('.loader').remove()
-            document.querySelector('.loader').remove()
-            calendar();
+    //Check for saved data
+    coursesData = JSON.parse(localStorage.getItem("coursesData"));
+    assignments = JSON.parse(localStorage.getItem("assignments"));
+    submissions = JSON.parse(localStorage.getItem("submissions"));
 
-        });
+    //Show calendar
+
+    if (coursesData === null || assignments === null || submissions === null) {
+        spinner.style.animation = "spin 1.5s linear infinite"
+        calendar()
+        colorChange()
+        update()
     } else {
-        addFilters();
-        createObj();
-        filterChanged();
+        addFilters()
+        createObj()
         document.querySelector('.loader').remove()
-        document.querySelector('.loader').remove()
-        calendar();
-        update();
+        calendar()
+        colorChange()
+        filter()
+        update()
     }
 }
-
-function OAuth20() {
-    window.location.replace("https://accounts.google.com/o/oauth2/v2/auth?" +
-        `scope=${scope}` +
-        "include_granted_scopes=true&" +
-        "response_type=token&" +
-        "state=state_parameter_passthrough_value&" +
-        "redirect_uri=https://zhermit09.github.io/WebApp/&" +
-        "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com");
-}
-
-//  https://zhermit09.github.io/WebApp/ http://localhost:63342/WebApp/index.html
 
 function update() {
-    const spinner = document.querySelector('header i')
     spinner.style.animation = "spin 1.5s linear infinite"
+    assList.style.textAlign = "left"
 
     coursesData = [];
-    assignments = [];
-    submissions = [];
-    timedAssignments = [];
-
     courseFetch().then(() => {
-
-        filterChanged();
-        try {
-            document.querySelector('.loader').remove()
-            document.querySelector('.loader').remove()
-        } catch (e) {
-        }
-
-        calendar();
-        spinner.style.animation = "none"
-    });
+        addFilters()
+        assignments = [];
+        submissions = [];
+        assigmentFetch().then(statusFetch)
+            .then(() => {
+                timedAssignments = [];
+                createObj()
+                try{
+                document.querySelector('.loader').remove()
+                }catch (e){}
+                spinner.style.animation = "return 1s";
+                //Update calendar
+                calendar()
+                colorChange()
+                filter()
+            })
+    })
 }
 
+//Fetchy-----------------------------------------------------------
 async function courseFetch() {
-    token = JSON.parse(sessionStorage.getItem("Token"));
-    header = new Headers();
+    //Preparing header
     header.append('Authorization', `Bearer ${token}`);
-    coursesData = [];
+
+    //And here begins the "fun"
     try {
+        //Waits for fetch to return a response
         const response = await fetch('https://classroom.googleapis.com/v1/courses', {
             method: 'GET',
             headers: header
         });
-        coursesData = await response.json();
+        //Take out the courses array from json
+        const {courses} = await response.json();
+        coursesData = courses
+
     } catch (error) {
         console.error(error);
     }
-    addFilters();
     localStorage.setItem("coursesData", JSON.stringify(coursesData));
-    await assigmentFetch();
 }
 
-
 async function assigmentFetch() {
-    let class_id = "";
-    let BATCH = [];
-    const {courses} = coursesData
+    //Preparing to batch request
+    let batch = []
+
     try {
-        courses.forEach((courseSp) => {
-            class_id = courseSp.id.toString();
-            BATCH.push(fetch(`https://classroom.googleapis.com/v1/courses/${class_id}/courseWork`, {
+        //1 request for every course
+        coursesData.forEach((course) => {
+
+            //Push the promise into the array
+            batch.push(fetch(`https://classroom.googleapis.com/v1/courses/${course.id.toString()}/courseWork`, {
                 method: 'GET',
                 headers: header
             }).then((res) => res.json()))
         })
-        assignments = await Promise.all(BATCH);
-        assignments.forEach((ass, index) => {
-            if (Object.keys(assignments[index]).length === 0) {
-                assignments.splice(index, 1)
+        //Save all the Batch requested data (minutes of wait time saved, yay)
+        assignments = await Promise.all(batch);
+
+        //Check if the course has no data and remove from array
+        assignments.forEach((ass) => {
+            if (Object.keys(ass).length === 0) {
+                assignments.splice(ass, 1)
             }
         })
     } catch (error) {
         console.error(error);
     }
     localStorage.setItem("assignments", JSON.stringify(assignments));
-    await statusFetch();
 }
 
-let assBatch;
-
-
 async function statusFetch() {
-    assBatch = [];
-    let assigment_id;
-    let class_id;
+    //1 fetch, 16 fetch, Nah that for scrubs, how about hundreds?
+    let batch = [];
+
     try {
+        //For every course
         assignments.forEach((courseWorks) => {
+            //Take out the array
             const {courseWork} = courseWorks;
+            //For every assigment in array
             courseWork.forEach((workData) => {
+                //If assignment has a deadline
                 if (workData['dueDate'] !== undefined) {
-                    assigment_id = workData['id']
-                    class_id = workData['courseId']
-                    assBatch.push(fetch(`https://classroom.googleapis.com/v1/courses/${class_id}/courseWork/${assigment_id}/studentSubmissions`, {
+                    //Save promise in array
+                    batch.push(fetch(`https://classroom.googleapis.com/v1/courses/${workData['courseId']}/courseWork/${workData['id']}/studentSubmissions`, {
                         method: 'GET',
                         headers: header
                     }).then((res) => res.json()))
@@ -146,120 +152,187 @@ async function statusFetch() {
     } catch (error) {
         console.error(error);
     }
-    submissions = await Promise.all(assBatch);
+    submissions = await Promise.all(batch);
     localStorage.setItem("submissions", JSON.stringify(submissions));
-    createObj()
 }
-
 
 function createObj() {
     let lateTemp;
-    assignments.forEach((courseWorks) => {
-        const {courseWork} = courseWorks;
-        courseWork.forEach((workData) => {
-            if (workData['dueDate'] !== undefined) {
-                submissions.forEach((submission) => {
-                    try {
-                        if (workData['id'] === submission['studentSubmissions'][0]['courseWorkId']) {
-                            lateTemp = (submission['studentSubmissions'][0]['late'] === undefined) ? false : submission['studentSubmissions'][0]['late'];
-                            timedAssignments.push(
-                                {
-                                    Title: workData['title'],
-                                    Link: workData['alternateLink'],
-                                    CourseID: workData['courseId'],
 
-                                    DueDate: workData['dueDate'],
-
-                                    DueTime: workData['dueTime'],
-
-                                    AssigmentID: workData['id'],
-                                    Late: lateTemp,
-                                    State: submission['studentSubmissions'][0]['state']
-                                })
-                        }
-                    } catch (e) {
-
+    //"Assembly" or object creation
+    try {
+        //Submission contains only those assignments which have a deadline, those are the only ones I want to create
+        //So for every submission
+        submissions.forEach((sub) => {
+            //Take out the item
+            sub = sub['studentSubmissions'][0]
+            //Then loop through assignments (who have different data)
+            assignments.forEach((course) => {
+                //Take out array per course
+                const {courseWork} = course
+                //Loop through the array
+                courseWork.every((ass) => {
+                    //Until you find data with the same ID
+                    if (ass['id'] === sub['courseWorkId']) {
+                        lateTemp = (sub['late'] === undefined) ? false : sub['late'];
+                        //Creat object and add to array
+                        timedAssignments.push(
+                            {
+                                Title: ass['title'],
+                                Link: ass['alternateLink'],
+                                CourseID: ass['courseId'],
+                                DueDate: ass['dueDate'],
+                                DueTime: ass['dueTime'],
+                                AssigmentID: ass['id'],
+                                Late: lateTemp,
+                                State: sub['state']
+                            })
+                        //Break out
+                        return false
                     }
-
+                    //Repeat
+                    return true
                 })
-            }
+            })
         })
-    })
+    } catch
+        (e) {
+        console.log(e)
+    }
 }
 
-//---------------------------------------------------------------------------------------------
+//Calendar-------------------------------------------------------------------------------------
+
 const date = new Date();
-document.querySelector('.list .header div #date').innerHTML = date.toDateString()
+//Show current date under assigments
+document.querySelector('#date').innerHTML = date.toDateString()
+
+//Header of calendar
+const calendarMonth = document.querySelector(".date h1");
+const calendarFullDate = document.querySelector(".date p");
+
+//Calendar days div
+const calendarDays = document.querySelector('.days');
+
+//Events-----------------------------------------------------------
+document.querySelector(".prev")
+    .addEventListener("click", () => {
+        date.setMonth(date.getMonth() - 1)
+        if (date.getMonth() !== new Date().getMonth()) {
+            date.setDate(1)
+        } else {
+            todayChecker()
+        }
+        calendar()
+        colorChange()
+    })
+document.querySelector(".next")
+    .addEventListener("click", () => {
+        date.setMonth(date.getMonth() + 1)
+        if (date.getMonth() !== new Date().getMonth()) {
+            date.setDate(1)
+        } else {
+            todayChecker()
+        }
+        calendar()
+        colorChange()
+    })
+document.querySelector('.days').addEventListener("mouseover", (e) => {
+    e = e.target
+    if (!e.classList.contains('days') && !e.classList.contains('assCounter')) {
+        let month = 0
+        let year = 0
+        if (e.classList.contains('prevDate')) {
+            month = -1
+        } else if (e.classList.contains('nextDate')) {
+            month = 1
+            if (date.getMonth() === 0) {
+                year = 1
+            }
+        }
+        let temp = new Date(date.getFullYear() + year, date.getMonth() + month, date.getDate())
+        temp.setDate(parseInt(e.innerHTML))
+        document.querySelector(".date p").innerHTML = temp.toDateString()
+        //-----------------------
+        e.addEventListener("mouseleave", () => {
+            document.querySelector(".date p").innerHTML = date.toDateString();
+        })
+    }
+})
+document.querySelector('.days').addEventListener("click", (e) => {
+    if (!e.target.classList.contains('days') && !e.target.classList.contains('assCounter')) {
+        calendarDayFilter()
+    }
+})
+
+//-----------------------------------------------------------------
+
 
 function calendar() {
-    if (date.getMonth() === new Date().getMonth()) {
-        date.setDate(new Date().getDate())
-    }
-
-    const calMonth = document.querySelector(".date h1");
-    const calFullDate = document.querySelector(".date p");
-    const calDays = document.querySelector('.days');
-
     let days = "";
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-
-    const months = [
-        "January", "February", "March",
-        "April", "May", "June",
-        "July", "August", "September",
-        "October", "November", "December"
-    ]
+    //This month's last date
     const monthLDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+    //Last month's last date
     const lMonthLDay = new Date(date.getFullYear(), date.getMonth(), 0);
-    const prevDate = (lMonthLDay.getDate() - (lMonthLDay.getDay() - 1));
+
+    //Last month FIRST date visable on calendar (26...,30, 1, 2, 3; 26 is first visable)
+    const firstDate = (lMonthLDay.getDate() - (lMonthLDay.getDay() - 1));
+
+    //Last date visable on calendar
     let nextDate = 7 - monthLDay.getDay();
     let counter;
 
+    //Header
+    calendarMonth.innerHTML = months[date.getMonth()]
+    calendarFullDate.innerHTML = date.toDateString()
 
-    calMonth.innerHTML = months[date.getMonth()]
-    calFullDate.innerHTML = date.toDateString()
-    for (let k = prevDate; k <= lMonthLDay.getDate(); k++) {
-        counter = assignmentCounter(k, date.getMonth(), date.getFullYear())
-        days += `<div class="otherDate">${k}<div class="assCounter">${counter}</div></div>`;
+    //For first visable date to last date of previos month
+    for (let k = firstDate; k <= lMonthLDay.getDate(); k++) {
+
+        counter = assignmentCounter(new Date(date.getFullYear(), date.getMonth() - 1, k))
+        //Keep saveing in a variable
+        days += `<div class="prevDate">${k}<div class="assCounter">${counter}</div></div>`;
     }
-    calDays.innerHTML = days;
 
+    //Dates of this month
     for (let i = 1; i <= monthLDay.getDate(); i++) {
-        counter = assignmentCounter(i, (date.getMonth() + 1), date.getFullYear());
+        counter = assignmentCounter(new Date(date.getFullYear(), date.getMonth(), i));
+
+        //If date on calendar matched today's date
         if (i === date.getDate() && date.getMonth() === new Date().getMonth() && new Date().getFullYear() === date.getFullYear()) {
+            //Give class "today"
             days += `<div class="today">${i}<div class="assCounter">${counter}</div></div>`;
+            //If only date and month match
         } else if (i === date.getDate() && date.getMonth() === new Date().getMonth()) {
+            //Give class "other today"
             days += `<div class="otherToday">${i}<div class="assCounter">${counter}</div></div>`;
         } else {
+            //Give class "normal day"
             days += `<div class="nDay">${i}<div class="assCounter">${counter}</div></div>`;
         }
     }
-    calDays.innerHTML = days;
 
-    if (lMonthLDay.getDay() + monthLDay.getDate() < 35) nextDate += 7;
+    //Checks if requiers an extra row of calendar days
+    nextDate += (lMonthLDay.getDay() + monthLDay.getDate() < 35) ? 7 : 0;
+
+    //Dates of next month
     for (let j = 1; j <= nextDate; j++) {
-        counter = assignmentCounter(j, (date.getMonth() + 2), date.getFullYear());
-        days += `<div class="otherDate">${j}<div class="assCounter">${counter}</div></div>`;
-
+        counter = assignmentCounter(new Date(date.getFullYear(), date.getMonth() + 1, j));
+        days += `<div class="nextDate">${j}<div class="assCounter">${counter}</div></div>`;
     }
-    calDays.innerHTML = days;
-
-
-    colorChange();
+    //Push variable to html
+    calendarDays.innerHTML = days;
+    //  colorChange();
 }
 
-function assignmentCounter(dayC, monthC, yearC) {
+function assignmentCounter(dateZ) {
     let counter = 0;
-    if (monthC > 12) {
-        monthC = 1;
-        yearC++;
-    } else if (monthC < 1) {
-        monthC = 12;
-        yearC--;
-    }
     timedAssignments.forEach((ass) => {
         const {DueDate} = ass;
-        if (DueDate['year'] === yearC && DueDate['month'] === monthC && DueDate['day'] === dayC) {
+        if (DueDate['year'] === dateZ.getFullYear() && DueDate['month'] === (dateZ.getMonth() + 1) && DueDate['day'] === dateZ.getDate()) {
             counter++;
         }
     })
@@ -268,10 +341,10 @@ function assignmentCounter(dayC, monthC, yearC) {
     } else {
         return "";
     }
-
 }
 
 function colorChange() {
+    //All calendar days divs
     const daysBorder = document.querySelectorAll(".days div:not(.assCounter)")
     const element = [
         document.querySelector(".header h1"),
@@ -280,6 +353,7 @@ function colorChange() {
         document.querySelector(".next"),
         document.querySelector(".prev")]
 
+    //Gives them different classes depending on month, changes apperance
     switch (date.getMonth()) {
         case 11:
         case 0:
@@ -334,6 +408,7 @@ function colorChange() {
             })
             break;
     }
+    //Hides the green circle of counter if the div is empty
     daysBorder.forEach((div) => {
         div = div.children[0]
         if (div.innerHTML === "") {
@@ -342,227 +417,44 @@ function colorChange() {
     })
 }
 
-document.querySelector(".prev")
-    .addEventListener("click", () => {
-        date.setMonth(date.getMonth() - 1)
-        if (date.getMonth() !== new Date().getMonth()) date.setDate(1)
-        calendar()
-    })
-document.querySelector(".next")
-    .addEventListener("click", () => {
-        date.setMonth(date.getMonth() + 1)
-        if (date.getMonth() !== new Date().getMonth()) {
-            date.setDate(1)
-        }
-        calendar()
-    })
-
-document.querySelector('.days').addEventListener("mouseover", (hover) => {
-    if (!hover.target.classList.contains('days') && !hover.target.classList.contains('assCounter')) {
-        let targetDate = date
-        targetDate.setDate(parseInt(hover.target.innerHTML))
-
-        let dateTemp = targetDate;
-        dateTemp.setMonth(dateTemp.getMonth()-1)
-
-        document.querySelector(".date p").innerHTML = targetDate.toDateString()
-        console.log(dateTemp.toDateString())
-
-        hover.target.addEventListener("mouseleave", () => {
-            if (date.getMonth() === new Date().getMonth()) date.setDate(new Date().getDate())
-            else {
-                date.setDate(1)
-            }
-            document.querySelector(".date p").innerHTML = date.toDateString();
-        })
-    }
-})
-document.querySelector('.days').addEventListener("click", (e) => {
-    if (!e.target.classList.contains('days') && !e.target.classList.contains('assCounter')) {
-        if (e.target.classList.contains('otherDate')) {
-            let month = (parseInt(e.target.innerHTML) > 15) ? date.getMonth() - 1 : date.getMonth() + 1
-            month = (month > 11) ? 0 : month
-            month = (month < 0) ? 11 : month
-            console.log(month)
-        }
-        calendarDayFilter()
-    }
-})
-
 function calendarDayFilter() {
-    let filterDate = date
-
-    const assList = document.querySelector('.assContainer #assigmentList');
-    const container = document.querySelector('.assContainer ');
-    const element = document.querySelector('.empty');
-
-    let title = "";
     let temp = "";
-    if (element !== null) {
-        container.removeChild(element);
-    }
+    let dateF = new Date(calendarFullDate.innerHTML)
+    removeEmpty()
+
     timedAssignments.forEach((ass) => {
         const {DueDate} = ass
-        if (DueDate['year'] === filterDate.getFullYear() &&
-            DueDate['month'] === (filterDate.getMonth() + 1) &&
-            DueDate['day'] === filterDate.getDate()) {
-
-            title = ass['Title']
-            if (ass['Title'].length > 110) {
-                title = ass['Title'].slice(0, 110) //+ ". . ."
-            }
-            temp += `<li class="assigment">${title}</li>`
+        if (DueDate['year'] === dateF.getFullYear() &&
+            DueDate['month'] === (dateF.getMonth() + 1) &&
+            DueDate['day'] === dateF.getDate()) {
+            temp += `<li class="assigment">${ass['Title']}</li>`
         }
     })
     assList.innerHTML = temp;
-
-    if (assList.childElementCount === 0 && document.querySelector('.empty') === null) {
-        let element = document.createElement('p')
-        element.setAttribute("class", "empty")
-        element.appendChild(document.createTextNode("Empty"))
-        container.appendChild(element);
-    }
+    addEmpty()
     counter.innerHTML = "Total: " + assList.childElementCount;
 }
 
+function todayChecker() {
+    if (date.getMonth() === new Date().getMonth()) {
+        date.setDate(new Date().getDate())
+    }
+}
+
+//Assgments---------------------------------------------------------------------------
 const counter = document.querySelector('.list .header div #counter')
 counter.innerHTML = "Total: "
 
-//---------------------------------------------------------------------------------------------
-function addFilters() {
-    const filter = document.querySelector('.inputContainer select')
-    let temp = ""
+const select = document.querySelector('select')
+const assList = document.querySelector('#assigmentList');
+const container = document.querySelector('.assContainer ');
 
-    //20 ch
-    temp += '<optgroup label="Classes"></optgroup>"';
-    temp += '<option value="" hidden >Filters</option>';
-    temp += '<option value="" >All</option>';
-    let {courses} = coursesData;
-    courses = (courses === undefined || courses === null) ? coursesData : courses
-    courses.forEach((course) => {
-        temp += `<option value ="${course['id']}">${course['name']}</option>`
-    })
-    filter.innerHTML = temp;
-}
-
-function displayAllAssignments() {
-    document.querySelector('.list .header div #date').innerHTML = date.toDateString()
-    const assList = document.querySelector('.assContainer #assigmentList')
-    const container = document.querySelector('.assContainer ')
-    let temp = ""
-    let title = ""
-
-    timedAssignments.forEach((ass) => {
-        title = ass['Title']
-        if (ass['Title'].length > 110) {
-            title = ass['Title'].slice(0, 110) //+ "..."
-        }
-        temp += `<li class="assigment">${title}</li>`
-    })
-    assList.innerHTML = temp;
-    if (assList.childElementCount === 0) {
-        let element = document.createElement('p')
-        element.setAttribute("class", "empty")
-        element.appendChild(document.createTextNode("Empty"))
-        container.appendChild(element);
-        assList.innerHTML = "";
-    }
-    counter.innerHTML = "Total: " + assList.childElementCount
-}
-
-
-function filterChanged() {
-    const courseID = document.querySelector(".inputContainer select").value;
-    const assList = document.querySelector('.assContainer #assigmentList');
-    const container = document.querySelector('.assContainer ');
-    const element = document.querySelector('.empty');
-
-    if (element !== null) {
-        container.removeChild(element);
-    }
-    assList.innerHTML = "";
-
-    let filterChangedTemp = ""
-    let title = ""
-
-    timedAssignments.forEach((ass) => {
-        if (courseID === ass['CourseID']) {
-            title = ass['Title']
-            if (ass['Title'].length > 110) {
-                title = ass['Title'].slice(0, 110) //+ ". . ."
-            }
-            filterChangedTemp += `<li class="assigment">${title}</li>`
-
-        }
-    })
-    assList.innerHTML = filterChangedTemp;
-    if (courseID === "") {
-        displayAllAssignments();
-    }
-    if (assList.childElementCount === 0 && document.querySelector('.empty') === null) {
-        let element = document.createElement('p')
-        element.setAttribute("class", "empty")
-        element.appendChild(document.createTextNode("Empty"))
-        container.appendChild(element);
-    }
-    counter.innerHTML = "Total: " + assList.childElementCount;
-}
-
-
-function search() {
-    filterChanged();
-    const element = document.querySelector('.empty');
-    const container = document.querySelector('.assContainer ');
-    const assList = document.querySelector('#assigmentList');
-    const titles = document.querySelectorAll('#assigmentList li')
-    const magnifyingGlas = document.querySelector('label i')
-    const value = document.querySelector('#inputField')
-
-    magnifyingGlas.style.visibility = "hidden";
-
-    if (element !== null) {
-        container.removeChild(element);
-    }
-
-
-    let searchResults = [];
-
-    titles.forEach((item) => {
-        if (item.innerHTML.toLowerCase().search(value.value.toLowerCase()) > -1) {
-            timedAssignments.forEach((ass) => {
-                if (ass['Title'].search(item.innerHTML) > -1) {
-                    searchResults.push(ass)
-                }
-            })
-        }
-    })
-    let temp = "";
-    let title = "";
-
-    searchResults.forEach((result) => {
-        title = result['Title']
-        if (result['Title'].length > 110) {
-            title = result['Title'].slice(0, 110) //+ "..."
-        }
-        temp += `<li class="assigment">${title}</li>`
-    })
-    assList.innerHTML = temp;
-    counter.innerHTML = "Total: " + searchResults.length;
-    if (searchResults.length === 0 && document.querySelector('.empty') === null) {
-        let element = document.createElement('p')
-        element.setAttribute("class", "empty")
-        element.appendChild(document.createTextNode("Empty"))
-        container.appendChild(element);
-    }
-    if (value.value === "") {
-        magnifyingGlas.style.visibility = "visible";
-        filterChanged()
-    }
-}
-
+//Events-----------------------------------------------------------
 document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
+    window.getSelection().removeAllRanges();
     if (e.target.classList.contains('assigmentDetails')) {
         e = e.target
+        //Loopar tills den får rätt parent
         while (e.id !== 'assigmentDetails') {
             e = e.parentElement
         }
@@ -570,22 +462,141 @@ document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
     } else {
         e = e.target
     }
+    //Om man vill öppna
     if (e.style.height === "" || e.style.height === "4rem") {
-        window.getSelection().removeAllRanges();
         let subject;
         e.style.height = "23rem"
         e.style.textAlign = "center"
 
-        timedAssignments.forEach((ass) => {
-            const {courses} = coursesData;
-            courses.forEach((course) => {
+        timedAssignments.every((ass) => {
+            coursesData.every((course) => {
                 if (course['id'] === ass['CourseID']) {
                     subject = course['name']
+                    return false
                 }
+                return true
             })
 
             if (ass['Title'].search(e.innerHTML) > -1) {
-                e.innerHTML = `${ass['Title']}<div id="assigmentDetails" class="assigmentDetails">
+                info(e, ass, subject)
+                return false
+            }
+            return true
+        })
+        //Om man vill stänga
+    } else if (e.style.height === "23rem") {
+        let details = document.querySelector('#assigmentDetails')
+        if (details !== null) {
+            details.remove()
+        }
+        e.style.textAlign = "left"
+        e.style.height = "4rem"
+    }
+})
+
+//-----------------------------------------------------------------
+
+function addFilters() {
+    let temp = ""
+
+    temp += '<optgroup label="Classes"></optgroup>"';
+    temp += '<option value="" hidden >Filters</option>';
+    temp += '<option value="" >All</option>';
+
+    coursesData.forEach((course) => {
+        //Saveing ID so that it is easier to filter later
+        temp += `<option value ="${course['id']}">${course['name']}</option>`
+    })
+    select.innerHTML = temp;
+}
+
+function filter() {
+    const courseID = document.querySelector(".inputContainer select").value;
+    let filterTemp = ""
+
+    //Clean list
+    assList.innerHTML = "";
+    removeEmpty()
+    //Serch for objects with same course ID
+    timedAssignments.forEach((ass) => {
+        if (courseID === ass['CourseID']) {
+            filterTemp += `<li class="assigment">${ass['Title']}</li>`
+        }
+    })
+    assList.innerHTML = filterTemp;
+
+    if (courseID === "") {
+        displayAllAssignments();
+    }
+    addEmpty()
+    counter.innerHTML = "Total: " + assList.childElementCount;
+}
+
+function displayAllAssignments() {
+    let temp = ""
+
+    removeEmpty()
+    timedAssignments.forEach((ass) => {
+        temp += `<li class="assigment">${ass['Title']}</li>`
+    })
+    assList.innerHTML = temp;
+    addEmpty()
+
+    counter.innerHTML = "Total: " + assList.childElementCount
+}
+
+function search() {
+    filter()
+    removeEmpty()
+    const magnifyingGlas = document.querySelector('label i')
+    magnifyingGlas.style.visibility = "hidden";
+
+    const title = document.querySelectorAll('#assigmentList li')
+    const value = document.querySelector('#inputField')
+    let temp = "";
+
+    title.forEach((item) => {
+        if (item.innerHTML.toLowerCase().search(value.value.toLowerCase()) > -1) {
+            timedAssignments.every((ass) => {
+                if (ass['Title'].search(item.innerHTML) > -1) {
+                    temp += `<li class="assigment">${ass['Title']}</li>`
+                    return false
+                }
+                return true
+            })
+        }
+    })
+    assList.innerHTML = temp;
+    counter.innerHTML = "Total: " + assList.childElementCount;
+
+    addEmpty()
+    if (value.value === "") {
+        magnifyingGlas.style.visibility = "visible";
+        filter()
+    }
+}
+
+function removeEmpty() {
+    const empty = document.querySelector('.empty');
+    if (empty !== null) {
+        container.removeChild(empty);
+    }
+}
+
+function addEmpty() {
+    if (assList.childElementCount === 0 && document.querySelector('.empty') === null) {
+        let element = document.createElement('p')
+        element.setAttribute("class", "empty")
+        element.appendChild(document.createTextNode("Empty"))
+        container.appendChild(element);
+        assList.innerHTML = "";
+    }
+}
+
+function info(e, ass, subject) {
+
+    //För att den ska få rätt parent så satte jag samma class på alla, kom inte på ett bättre sätt
+    e.innerHTML = `${ass['Title']}<div id="assigmentDetails" class="assigmentDetails">
                 <p class="assigmentDetails">Details</p>
                 <div class="assigmentDetails">
                     <div class="assigmentDetails"><p class="assigmentDetails">Subject:</p> 
@@ -607,15 +618,4 @@ document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
                </div>
                     <a class="assigmentDetails" target="_blank" href="${ass['Link']}">To Assigment</a> 
             </div>`
-            }
-        })
-    } else if (e.style.height === "23rem") {
-        window.getSelection().removeAllRanges();
-        let details = document.querySelector('#assigmentDetails')
-        if (details !== null) {
-            details.remove()
-        }
-        e.style.textAlign = "left"
-        e.style.height = "4rem"
-    }
-})
+}

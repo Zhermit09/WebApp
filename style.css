@@ -386,6 +386,7 @@ ul li {
     list-style: none;
     font-size: 1.3rem;
     text-shadow: 0.1rem 0.3rem 0.3rem rgba(0, 0, 0, 0.5);
+    overflow: hidden;
 
     border-width: 0.2rem;
     border-style: solid;
@@ -395,7 +396,7 @@ ul li {
     box-shadow: -0.2rem -0.3rem 0.3rem rgba(0, 0, 0, 1);
 
     margin: 0.3rem 0 0.3rem 0.8rem;
-    padding: 0.5rem;
+    padding: 0.3rem;
 }
 
 ul li:hover {
@@ -405,7 +406,7 @@ ul li:hover {
 
 /*------------*/
 #assigmentDetails {
-    height: 90%;
+    height: 89%;
     background: radial-gradient(#28282b 20%, #1a1a1d);
 
     display: flex;
@@ -538,6 +539,10 @@ ul li:hover {
     flex-wrap: wrap;
 }
 
+.days .loader{
+    margin: auto;
+}
+
 .days div:not(.assCounter):not(.loader) {
     width: calc(39.6rem / 7);
     height: calc(33.2rem / 6);
@@ -562,7 +567,8 @@ ul li:hover {
     cursor: pointer;
 }
 
-.otherDate:not(.assCounter) {
+.nextDate:not(.assCounter),
+.prevDate:not(.assCounter){
     color: rgba(199, 208, 255, 0.7);
     background: linear-gradient(#000000, #1e1e1d 99%);
 }
@@ -580,7 +586,7 @@ div .today:not(.assCounter) {
 
 .otherToday:not(.assCounter) {
     border: 1px solid #ffffff;
-    background: linear-gradient(#8e004e, #1e1e1d 99%) no-repeat;
+    background: linear-gradient(#63008e, #1e1e1d 99%) no-repeat;
 }
 
 .assCounter {
@@ -612,6 +618,12 @@ div .today:not(.assCounter) {
     0% {
         transform: rotate(0deg);
     }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes return {
     100% {
         transform: rotate(360deg);
     }
