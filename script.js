@@ -1,12 +1,11 @@
 //@ts-check
-// noinspection SpellCheckingInspection
-
 "use strict";
+
 window.onload = () => tokenCheck();
 
 //Scope for the Authentication thingy
 const scope = "https://www.googleapis.com/auth/classroom.courses&" + "https://www.googleapis.com/auth/classroom.coursework.me.readonly&" + "https://www.googleapis.com/auth/classroom.coursework.students.readonly&";
-const OAuth20 = "https://accounts.google.com/o/oauth2/v2/auth?" + `scope=${scope}` + "include_granted_scopes=true&" + "response_type=token&" + "state=state_parameter_passthrough_value&" + "redirect_uri=https://zhermit09.github.io/WebApp/&" + "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
+const OAuth20 = "https://accounts.google.com/o/oauth2/v2/auth?" + `scope=${scope}` + "include_granted_scopes=true&" + "response_type=token&" + "state=state_parameter_passthrough_value&" + "redirect_uri=http://localhost:63342/WebApp/index.html&" + "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
 let header = new Headers()
 let token
 
@@ -30,9 +29,16 @@ function tokenCheck() {
     //Clean the link
     location.hash = "";
     //Check for saved data
-    coursesData = JSON.parse(localStorage.getItem("coursesData"));
-    assignments = JSON.parse(localStorage.getItem("assignments"));
-    submissions = JSON.parse(localStorage.getItem("submissions"));
+    try {
+        coursesData = JSON.parse(localStorage.getItem("coursesData"));
+        assignments = JSON.parse(localStorage.getItem("assignments"));
+        submissions = JSON.parse(localStorage.getItem("submissions"));
+    }catch (e){
+        coursesData = null
+        assignments = null
+        submissions = null
+    }
+
 
     //Show calendar
 
@@ -91,12 +97,13 @@ async function courseFetch() {
         });
         //Take out the courses array from json
         const {courses} = await response.json();
+        localStorage.setItem("coursesData", JSON.stringify(coursesData));
         coursesData = courses
 
     } catch (error) {
         console.error(error);
     }
-    localStorage.setItem("coursesData", JSON.stringify(coursesData));
+
 }
 
 async function assigmentFetch() {
