@@ -5,7 +5,7 @@ window.onload = () => tokenCheck();
 
 //Scope for the Authentication thingy
 const scope = "https://www.googleapis.com/auth/classroom.courses&" + "https://www.googleapis.com/auth/classroom.coursework.me.readonly&" + "https://www.googleapis.com/auth/classroom.coursework.students.readonly&";
-const OAuth20 = "https://accounts.google.com/o/oauth2/v2/auth?" + `scope=${scope}` + "include_granted_scopes=true&" + "response_type=token&" + "state=state_parameter_passthrough_value&" + "redirect_uri=https://zhermit09.github.io/WebApp/&" + "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
+const OAuth20 = "https://accounts.google.com/o/oauth2/v2/auth?" + `scope=${scope}` + "include_granted_scopes=true&" + "response_type=token&" + "state=state_parameter_passthrough_value&" + "redirect_uri=http://localhost:63342/WebApp/index.html&" + "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
 let header = new Headers()
 let token
 
@@ -39,16 +39,13 @@ function tokenCheck() {
         submissions = null
     }
 
-
-    //Show calendar
-
     if (coursesData === null || assignments === null || submissions === null) {
         spinner.style.animation = "spin 1.5s linear infinite"
         calendar()
         colorChange()
         update()
     } else {
-        addFilters()
+      //  addFilters()
         createObj()
         document.querySelector('.loader').remove()
         calendar()
@@ -64,7 +61,7 @@ function update() {
 
     coursesData = [];
     courseFetch().then(() => {
-        addFilters()
+        //addFilters()
         assignments = [];
         submissions = [];
         assigmentFetch().then(statusFetch)
