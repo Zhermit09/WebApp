@@ -45,7 +45,7 @@ function tokenCheck() {
         colorChange()
         update()
     } else {
-      //  addFilters()
+        addFilters()
         createObj()
         document.querySelector('.loader').remove()
         calendar()
@@ -61,7 +61,7 @@ function update() {
 
     coursesData = [];
     courseFetch().then(() => {
-        //addFilters()
+        addFilters()
         assignments = [];
         submissions = [];
         assigmentFetch().then(statusFetch)
