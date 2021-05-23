@@ -45,7 +45,7 @@ function tokenCheck() {
         colorChange()
         update()
     } else {
-      //  addFilters()
+        addFilters()
         createObj()
         document.querySelector('.loader').remove()
         calendar()
@@ -63,7 +63,7 @@ function update() {
     assignments = [];
     submissions = [];
     courseFetch().then(() => {
-        //addFilters()
+        addFilters()
         assigmentFetch().then(statusFetch)
             .then(() => {
                 timedAssignments = [];
@@ -93,10 +93,10 @@ async function courseFetch() {
             headers: header
         });
         //Take out the courses array from json
-        const {courses} = await response.json();
-        localStorage.setItem("coursesData", JSON.stringify(coursesData));
+        coursesData = await response.json();
+        const {courses} = coursesData
         coursesData = courses
-
+        localStorage.setItem("coursesData", JSON.stringify(coursesData));
     } catch (error) {
         console.error(error);
     }
@@ -282,10 +282,10 @@ function calendar() {
     //Last month's last date
     const lMonthLDay = new Date(date.getFullYear(), date.getMonth(), 0);
 
-    //Last month FIRST date visable on calendar (26...,30, 1, 2, 3; 26 is first visable)
+    //Last month FIRST date visible on calendar (26...,30, 1, 2, 3; 26 is first visible)
     const firstDate = (lMonthLDay.getDate() - (lMonthLDay.getDay() - 1));
 
-    //Last date visable on calendar
+    //Last date visible on calendar
     let nextDate = 7 - monthLDay.getDay();
     let counter;
 
