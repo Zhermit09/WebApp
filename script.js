@@ -45,7 +45,7 @@ function tokenCheck() {
         colorChange()
         update()
     } else {
-        addFilters()
+      //  addFilters()
         createObj()
         document.querySelector('.loader').remove()
         calendar()
@@ -60,10 +60,10 @@ function update() {
     assList.style.textAlign = "left"
 
     coursesData = [];
+    assignments = [];
+    submissions = [];
     courseFetch().then(() => {
-        addFilters()
-        assignments = [];
-        submissions = [];
+        //addFilters()
         assigmentFetch().then(statusFetch)
             .then(() => {
                 timedAssignments = [];
