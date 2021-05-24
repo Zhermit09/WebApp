@@ -62,10 +62,8 @@ function update() {
     coursesData = [];
     assignments = [];
     submissions = [];
-    courseFetch().then(() => {
-        addFilters()
-        assigmentFetch().then(statusFetch)
-            .then(() => {
+    courseFetch().then(assigmentFetch).then(statusFetch).then(() => {
+                addFilters()
                 timedAssignments = [];
                 createObj()
                 try{
@@ -77,7 +75,6 @@ function update() {
                 colorChange()
                 filter()
             })
-    })
 }
 
 //Fetchy-----------------------------------------------------------
