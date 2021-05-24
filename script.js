@@ -1,6 +1,7 @@
 //@ts-check
 "use strict";
 
+
 window.onload = () => tokenCheck();
 
 //Scope for the Authentication thingy
