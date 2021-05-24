@@ -117,15 +117,21 @@ async function courseFetch() {
 async function assigmentFetch() {
     //Preparing to batch request
     let Batch = []
-    //1 request for every course
-    coursesData.forEach((course) => {
 
-        //Push the promise into the array
-        Batch.push(fetch(`https://classroom.googleapis.com/v1/courses/${course['id']}/courseWork`, {
-            method: 'GET',
-            headers: header
-        }).then((res) => res.json()))
-    })
+    try {
+        //1 request for every course
+        coursesData.forEach((course) => {
+
+            //Push the promise into the array
+            Batch.push(fetch(`https://classroom.googleapis.com/v1/courses/${course['id']}/courseWork`, {
+                method: 'GET',
+                headers: header
+            }).then((res) => res.json()))
+        })
+    } catch
+        (e) {
+        console.log(e)
+    }
     //Save all the Batch requested data (minutes of wait time saved, yay)
     assignments = await Promise.all(Batch);
 
@@ -143,24 +149,27 @@ async function statusFetch() {
     //1 fetch, 16 fetch, Nah that for scrubs, how about hundreds?
     let batch = [];
 
-
-    //For every course
-    assignments.forEach((courseWorks) => {
-        console.log(courseWorks)
-        //Take out the array
-        const {courseWork} = courseWorks;
-        //For every assigment in array
-        courseWork.forEach((workData) => {
-            //If assignment has a deadline
-            if (workData['dueDate'] !== undefined) {
-                //Save promise in array
-                batch.push(fetch(`https://classroom.googleapis.com/v1/courses/${workData['courseId']}/courseWork/${workData['id']}/studentSubmissions`, {
-                    method: 'GET',
-                    headers: header
-                }).then((res) => res.json()))
-            }
+    try {
+        //For every course
+        assignments.forEach((courseWorks) => {
+            //Take out the array
+            const {courseWork} = courseWorks;
+            //For every assigment in array
+            courseWork.forEach((workData) => {
+                //If assignment has a deadline
+                if (workData['dueDate'] !== undefined) {
+                    //Save promise in array
+                    batch.push(fetch(`https://classroom.googleapis.com/v1/courses/${workData['courseId']}/courseWork/${workData['id']}/studentSubmissions`, {
+                        method: 'GET',
+                        headers: header
+                    }).then((res) => res.json()))
+                }
+            })
         })
-    })
+    } catch
+        (e) {
+        console.log(e)
+    }
 
     submissions = await Promise.all(batch);
     localStorage.setItem("submissions", JSON.stringify(submissions));
@@ -214,7 +223,7 @@ function createObj() {
 //Calendar-------------------------------------------------------------------------------------
 
 const date = new Date();
-//Show current date under assigments
+//Show current date under assignments
 document.querySelector('#date').innerHTML = date.toDateString()
 
 //Header of calendar
