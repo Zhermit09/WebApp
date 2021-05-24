@@ -9,7 +9,7 @@ const scope =
     "https://www.googleapis.com/auth/classroom.courses%20" +
     "https://www.googleapis.com/auth/classroom.coursework.me%20" +
     "https://www.googleapis.com/auth/classroom.coursework.students%20" +
-    "https://www.googleapis.com/auth/classroom.student-submissions.me.readonly%20"+
+    "https://www.googleapis.com/auth/classroom.student-submissions.me.readonly%20" +
     "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly%20";
 const OAuth20 =
     "https://accounts.google.com/o/oauth2/v2/auth?" +
@@ -40,7 +40,7 @@ function tokenCheck() {
         }
     }
     //Clean the link
-  //  location.hash = "";
+    location.hash = "";
     //Check for saved data
     try {
         coursesData = JSON.parse(localStorage.getItem("coursesData"));
