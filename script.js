@@ -5,8 +5,20 @@
 window.onload = () => tokenCheck();
 
 //Scope for the Authentication thingy
-const scope = "https://www.googleapis.com/auth/classroom.courses&" + "https://www.googleapis.com/auth/classroom.coursework.me&" + "https://www.googleapis.com/auth/classroom.coursework.students&";
-const OAuth20 = "https://accounts.google.com/o/oauth2/v2/auth?" + `scope=${scope}` + "include_granted_scopes=true&" + "response_type=token&" + "state=state_parameter_passthrough_value&" + "redirect_uri=https://zhermit09.github.io/WebApp/&" + "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
+const scope =
+    "https://www.googleapis.com/auth/classroom.courses%20" +
+    "https://www.googleapis.com/auth/classroom.coursework.me%20" +
+    "https://www.googleapis.com/auth/classroom.coursework.students%20" +
+    "https://www.googleapis.com/auth/classroom.student-submissions.me.readonly%20"+
+    "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly%20";
+const OAuth20 =
+    "https://accounts.google.com/o/oauth2/v2/auth?" +
+    `scope=${scope}&` +
+    "include_granted_scopes=true&" +
+    "response_type=token&" +
+    "state=state_parameter_passthrough_value&" +
+    "redirect_uri=https://zhermit09.github.io/WebApp/&" +
+    "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
 let header = new Headers()
 let token
 
@@ -28,13 +40,13 @@ function tokenCheck() {
         }
     }
     //Clean the link
-    location.hash = "";
+  //  location.hash = "";
     //Check for saved data
     try {
         coursesData = JSON.parse(localStorage.getItem("coursesData"));
         assignments = JSON.parse(localStorage.getItem("assignments"));
         submissions = JSON.parse(localStorage.getItem("submissions"));
-    }catch (e){
+    } catch (e) {
         coursesData = null
         assignments = null
         submissions = null
@@ -64,18 +76,19 @@ function update() {
     assignments = [];
     submissions = [];
     courseFetch().then(assigmentFetch).then(statusFetch).then(() => {
-                addFilters()
-                timedAssignments = [];
-                createObj()
-                try{
-                document.querySelector('.loader').remove()
-                }catch (e){}
-                spinner.style.animation = "return 1s";
-                //Update calendar
-                calendar()
-                colorChange()
-                filter()
-            })
+        addFilters()
+        timedAssignments = [];
+        createObj()
+        try {
+            document.querySelector('.loader').remove()
+        } catch (e) {
+        }
+        spinner.style.animation = "return 1s";
+        //Update calendar
+        calendar()
+        colorChange()
+        filter()
+    })
 }
 
 //Fetchy-----------------------------------------------------------
@@ -103,30 +116,26 @@ async function courseFetch() {
 
 async function assigmentFetch() {
     //Preparing to batch request
-    let batch = []
+    let Batch = []
+    //1 request for every course
+    coursesData.forEach((course) => {
 
-    try {
-        //1 request for every course
-        coursesData.forEach((course) => {
+        //Push the promise into the array
+        Batch.push(fetch(`https://classroom.googleapis.com/v1/courses/${course['id']}/courseWork`, {
+            method: 'GET',
+            headers: header
+        }).then((res) => res.json()))
+    })
+    //Save all the Batch requested data (minutes of wait time saved, yay)
+    assignments = await Promise.all(Batch);
 
-            //Push the promise into the array
-            batch.push(fetch(`https://classroom.googleapis.com/v1/courses/${course.id.toString()}/courseWork`, {
-                method: 'GET',
-                headers: header
-            }).then((res) => res.json()))
-        })
-        //Save all the Batch requested data (minutes of wait time saved, yay)
-        assignments = await Promise.all(batch);
+    //Check if the course has no data and remove from array
+    assignments.forEach((ass) => {
+        if (Object.keys(ass).length === 0) {
+            assignments.splice(ass, 1)
+        }
+    })
 
-        //Check if the course has no data and remove from array
-        assignments.forEach((ass) => {
-            if (Object.keys(ass).length === 0) {
-                assignments.splice(ass, 1)
-            }
-        })
-    } catch (error) {
-        console.error(error);
-    }
     localStorage.setItem("assignments", JSON.stringify(assignments));
 }
 
