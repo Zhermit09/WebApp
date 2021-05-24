@@ -641,6 +641,12 @@ div .today:not(.assCounter) {
     }
 }
 
+@media (max-width: 1600px) {
+    html {
+        font-size: 65%;
+    }
+}
+
 @media (max-width: 1440px) {
     html {
         font-size: 70%;
