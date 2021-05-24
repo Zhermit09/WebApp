@@ -44,7 +44,6 @@ ________________________________________________________________________________
     Succesfully extracted data from Json
 
 23/4
-
     New scope:
     https://www.googleapis.com/auth/classroom.coursework.me.readonly
 
@@ -73,11 +72,23 @@ ________________________________________________________________________________
 
 10/5
     Changed styles of the objects
+
 17/5
     Started working on filtering
+
 19/5
     Finshed filtering and search functions, they are a mess codewise but seem to work.
     Added loader spinner.
     Created list with objects of assigments with all the propperties i want, now can easily add more if needed.
     Btw "React" who? "JQuery" who?
     !!!Might replace forEach() with every() to break out of it whenever done
+
+24/5
+    After days of pain i finallly figured out why my friends were recieving errors
+    One of the bugs was that when you add multiple scopes u have to tie them with %20 and not &. For some
+    magical fkn reason my enviorment was automaticly changning %20 but i could not see because i was clearing url hash.
+    The other seem to have not uppdated something idk, because god knows what content_script.js is coming from. And after i used his account on
+    my pc i saw no errors (other than errors the app worked just fine). Lastly because one has skipped some JP courses his
+    empty course "Hackaton" shifted places which exposed bug in my cleaning function. Which was only splicing the first item in array,
+
+    God im tired...

@@ -130,9 +130,9 @@ async function assigmentFetch() {
     assignments = await Promise.all(Batch);
 
     //Check if the course has no data and remove from array
-    assignments.forEach((ass) => {
+    assignments.forEach((ass, index = 0) => {
         if (Object.keys(ass).length === 0) {
-            assignments.splice(ass, 1)
+            assignments.splice(index, 1)
         }
     })
 
@@ -143,26 +143,25 @@ async function statusFetch() {
     //1 fetch, 16 fetch, Nah that for scrubs, how about hundreds?
     let batch = [];
 
-    try {
-        //For every course
-        assignments.forEach((courseWorks) => {
-            //Take out the array
-            const {courseWork} = courseWorks;
-            //For every assigment in array
-            courseWork.forEach((workData) => {
-                //If assignment has a deadline
-                if (workData['dueDate'] !== undefined) {
-                    //Save promise in array
-                    batch.push(fetch(`https://classroom.googleapis.com/v1/courses/${workData['courseId']}/courseWork/${workData['id']}/studentSubmissions`, {
-                        method: 'GET',
-                        headers: header
-                    }).then((res) => res.json()))
-                }
-            })
+
+    //For every course
+    assignments.forEach((courseWorks) => {
+        console.log(courseWorks)
+        //Take out the array
+        const {courseWork} = courseWorks;
+        //For every assigment in array
+        courseWork.forEach((workData) => {
+            //If assignment has a deadline
+            if (workData['dueDate'] !== undefined) {
+                //Save promise in array
+                batch.push(fetch(`https://classroom.googleapis.com/v1/courses/${workData['courseId']}/courseWork/${workData['id']}/studentSubmissions`, {
+                    method: 'GET',
+                    headers: header
+                }).then((res) => res.json()))
+            }
         })
-    } catch (error) {
-        console.error(error);
-    }
+    })
+
     submissions = await Promise.all(batch);
     localStorage.setItem("submissions", JSON.stringify(submissions));
 }
