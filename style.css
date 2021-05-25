@@ -452,7 +452,7 @@ ul li:hover {
     align-self: center;
     text-decoration: none;
 
-    margin-top: auto;
+    margin-top: 3rem;
     margin-bottom: 1rem;
     padding: 0.2em;
     background: linear-gradient(#494949, rgba(62, 62, 62, 0), #3e3e3e);

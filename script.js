@@ -491,8 +491,6 @@ document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
     //Om man vill öppna
     if ((e.style.height === "" || e.style.height === "4rem") && e.id.indexOf('assigmentList') < 0) {
         let subject;
-        e.style.height = "23rem"
-        e.style.textAlign = "center"
         timedAssignments.every((ass) => {
             if (e.innerHTML.replace(/&amp;/g, '&') === ass['Title']) {
                 coursesData.every((course) => {
@@ -507,8 +505,10 @@ document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
             }
             return true
         })
+        e.style.height = "auto"
+        e.style.textAlign = "center"
         //Om man vill stänga
-    } else if (e.style.height === "23rem") {
+    } else {
         let details = e.childNodes[1]
         if (details !== null) {
             details.remove()
