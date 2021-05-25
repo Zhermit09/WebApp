@@ -17,10 +17,11 @@ const OAuth20 =
     "include_granted_scopes=true&" +
     "response_type=token&" +
     "state=state_parameter_passthrough_value&" +
-    "redirect_uri=https://zhermit09.github.io/WebApp/&" +
+    "redirect_uri=http://localhost:63342/WebApp/index.html&" +
     "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
 
 let header = new Headers()
+let ongoing = false;
 let token
 
 let coursesData = []
@@ -70,26 +71,31 @@ function tokenCheck() {
 }
 
 function update() {
-    spinner.style.animation = "spin 1.5s linear infinite"
-    assList.style.textAlign = "left"
+    if (!ongoing) {
 
-    coursesData = [];
-    assignments = [];
-    submissions = [];
-    courseFetch().then(assigmentFetch).then(statusFetch).then(() => {
-        addFilters()
-        timedAssignments = [];
-        createObj()
-        try {
-            document.querySelector('.loader').remove()
-        } catch (e) {
-        }
-        spinner.style.animation = "return 1s";
-        //Update calendar
-        calendar()
-        colorChange()
-        filter()
-    })
+        ongoing = true
+        spinner.style.animation = "spin 1.5s linear infinite"
+        assList.style.textAlign = "left"
+
+        coursesData = [];
+        assignments = [];
+        submissions = [];
+        courseFetch().then(assigmentFetch).then(statusFetch).then(() => {
+            addFilters()
+            timedAssignments = [];
+            createObj()
+            try {
+                document.querySelector('.loader').remove()
+            } catch (e) {
+            }
+            spinner.style.animation = "return 1s";
+            //Update calendar
+            calendar()
+            colorChange()
+            filter()
+            ongoing = false
+        })
+    }
 }
 
 //Fetchy-----------------------------------------------------------
@@ -309,11 +315,11 @@ function calendar() {
     calendarMonth.innerHTML = months[date.getMonth()]
     calendarFullDate.innerHTML = date.toDateString()
 
-    //For first visable date to last date of previos month
+    //For first visible date to last date of previous month
     for (let k = firstDate; k <= lMonthLDay.getDate(); k++) {
 
         counter = assignmentCounter(new Date(date.getFullYear(), date.getMonth() - 1, k))
-        //Keep saveing in a variable
+        //Keep saving in a variable
         days += `<div class="prevDate">${k}<div class="assCounter">${counter}</div></div>`;
     }
 
@@ -335,7 +341,7 @@ function calendar() {
         }
     }
 
-    //Checks if requiers an extra row of calendar days
+    //Checks if requires an extra row of calendar days
     nextDate += (lMonthLDay.getDay() + monthLDay.getDate() < 35) ? 7 : 0;
 
     //Dates of next month
@@ -373,7 +379,7 @@ function colorChange() {
         document.querySelector(".next"),
         document.querySelector(".prev")]
 
-    //Gives them different classes depending on month, changes apperance
+    //Gives them different classes depending on month, changes appearance
     switch (date.getMonth()) {
         case 11:
         case 0:
@@ -461,7 +467,7 @@ function todayChecker() {
     }
 }
 
-//Assgments---------------------------------------------------------------------------
+//Assignments---------------------------------------------------------------------------
 const counter = document.querySelector('.list .header div #counter')
 counter.innerHTML = "Total: "
 
@@ -483,21 +489,19 @@ document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
         e = e.target
     }
     //Om man vill öppna
-    if (e.style.height === "" || e.style.height === "4rem") {
+    if ((e.style.height === "" || e.style.height === "4rem") && e.id.indexOf('assigmentList') < 0) {
         let subject;
         e.style.height = "23rem"
         e.style.textAlign = "center"
-
         timedAssignments.every((ass) => {
-            coursesData.every((course) => {
-                if (course['id'] === ass['CourseID']) {
-                    subject = course['name']
-                    return false
-                }
-                return true
-            })
-
-            if (ass['Title'].search(e.innerHTML) > -1) {
+            if (e.innerHTML.replace(/&amp;/g, '&') === ass['Title']) {
+                coursesData.every((course) => {
+                    if (course['id'] === ass['CourseID']) {
+                        subject = course['name']
+                        return false
+                    }
+                    return true
+                })
                 info(e, ass, subject)
                 return false
             }
@@ -505,7 +509,7 @@ document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
         })
         //Om man vill stänga
     } else if (e.style.height === "23rem") {
-        let details = document.querySelector('#assigmentDetails')
+        let details = e.childNodes[1]
         if (details !== null) {
             details.remove()
         }
@@ -524,7 +528,7 @@ function addFilters() {
     temp += '<option value="" >All</option>';
 
     coursesData.forEach((course) => {
-        //Saveing ID so that it is easier to filter later
+        //Saving ID so that it is easier to filter later
         temp += `<option value ="${course['id']}">${course['name']}</option>`
     })
     select.innerHTML = temp;
@@ -537,7 +541,7 @@ function filter() {
     //Clean list
     assList.innerHTML = "";
     removeEmpty()
-    //Serch for objects with same course ID
+    //Search for objects with same course ID
     timedAssignments.forEach((ass) => {
         if (courseID === ass['CourseID']) {
             filterTemp += `<li class="assigment">${ass['Title']}</li>`
@@ -566,6 +570,7 @@ function displayAllAssignments() {
 }
 
 function search() {
+    select.blur()
     filter()
     removeEmpty()
     const magnifyingGlas = document.querySelector('label i')
@@ -576,9 +581,9 @@ function search() {
     let temp = "";
 
     title.forEach((item) => {
-        if (item.innerHTML.toLowerCase().search(value.value.toLowerCase()) > -1) {
+        if (item.innerHTML.toLowerCase().indexOf(value.value.toLowerCase()) > -1) {
             timedAssignments.every((ass) => {
-                if (ass['Title'].search(item.innerHTML) > -1) {
+                if (ass['Title'] === item.innerHTML) {
                     temp += `<li class="assigment">${ass['Title']}</li>`
                     return false
                 }
