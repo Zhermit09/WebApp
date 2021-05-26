@@ -17,9 +17,9 @@ const OAuth20 =
     "include_granted_scopes=true&" +
     "response_type=token&" +
     "state=state_parameter_passthrough_value&" +
-    "redirect_uri=https://zhermit09.github.io/WebApp/&" +
+    "redirect_uri=http:https://zhermit09.github.io/WebApp/&" +
     "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
-//http://localhost:63342/WebApp/index.html
+
 let header = new Headers()
 let ongoing = false;
 let token
@@ -118,7 +118,6 @@ async function courseFetch() {
     } catch (error) {
         console.error(error);
     }
-
 }
 
 async function assigmentFetch() {
@@ -179,19 +178,25 @@ async function statusFetch() {
     }
 
     submissions = await Promise.all(batch);
+    submissions.forEach((ass, index = 0) => {
+        if (Object.keys(ass).length === 0) {
+            submissions.splice(index, 1)
+        }
+    })
     localStorage.setItem("submissions", JSON.stringify(submissions));
 }
 
 function createObj() {
     let lateTemp;
-
     //"Assembly" or object creation
     try {
         //Submission contains only those assignments which have a deadline, those are the only ones I want to create
         //So for every submission
         submissions.forEach((sub) => {
             //Take out the item
-            sub = sub['studentSubmissions'][0]
+      //      try {
+                sub = sub['studentSubmissions'][0]
+            //}catch (e){}
             //Then loop through assignments (who have different data)
             assignments.forEach((course) => {
                 //Take out array per course
