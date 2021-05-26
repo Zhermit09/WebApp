@@ -4,7 +4,7 @@
     Nu håller på att lära mig om OAuth 2.0 för att kunna komma in på ett google konto. (1h later, "Probably going to regret this")
 
 19/4
-    OAuth 2.0
+    Starte looking into OAuth 2.0
     Got my parameters from google.devolpers.console website.
     API documentation https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#oauth-2.0-endpoints_1
 
@@ -21,7 +21,7 @@
          redirect_uri=http://localhost:63342/WebApp/index.html&
          client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com
 _______________________________________________________________________________________________
-    Rspose that i get when get redirected.
+    Responce that i get when get redirected after authorization.
 
     http://localhost:63342/IdeaProjects/WebApp/index.html#state=state_parameter_passthrough_value&access_token=
     ya29.a0AfH6SMCw08rFlEdwL3VWbqmEgjK4LyYe-7LBxwNzqDHYED-oBtPBiu4nDc7zd-EoKuYglWTwPpmfD_qTZvRjhfiN0bfjW6yR5_SBWR_Q1IUxVi18a
@@ -29,21 +29,21 @@ ________________________________________________________________________________
     token_type=Bearer&expires_in=3599&
     scope=https://www.googleapis.com/auth/classroom.courses
 
-    Finished Authrezation phaze, now i get a seesion token so i can keep workin onward
-
-    http://localhost:63342/WebApp/index.html?_ijt=11bn6a7ore46vljlfr9lpv63u9
+    Finished authorization phaze, now i get a seesion token so i can keep working onward
 
 22/4
     Today was filled with a lot of pain.
     I learnt that my token has to go in a header when i make requests
-    Not a lot to talk about just hours of trial and error
-    Got blocked by Cors
+    Not a lot to talk about just hours of trial and error until i figured that out
+    Later got blocked by Cord when was making request
 
-    Changed from Authentication to Authorization which fixed CORD block
+    Changed header from Authentication to Authorization which fixed CORD block
     Succesfully retrived Json with my courses from classroom
     Succesfully extracted data from Json
 
 23/4
+    More fetches after i got the courses
+
     New scope:
     https://www.googleapis.com/auth/classroom.coursework.me.readonly
 
@@ -59,29 +59,30 @@ ________________________________________________________________________________
     Realized that it was fetching our old classrooms as well (even those we got kicked from)
 
 30/4
-    Batch sending of requests
-    a bunch of request optimazations
+    The amount of fetches i do is enormous so looking for soltions
+    Batch sending of requests solved the issue.
+    A bunch of request optimazations
 
 6/5
-    Calendar
+    Made a Calendar
     https://www.youtube.com/watch?v=o1yMqPyYeAo
 
 7/5
-    List
+    Made a List
     Starting to assemble info in obejects so that i can sort and use it easier
 
 10/5
     Changed styles of the objects
 
 17/5
-    Started working on filtering
+    Started working on filtering function
 
 19/5
     Finshed filtering and search functions, they are a mess codewise but seem to work.
     Added loader spinner.
     Created list with objects of assigments with all the propperties i want, now can easily add more if needed.
     Btw "React" who? "JQuery" who?
-    !!!Might replace forEach() with every() to break out of it whenever done
+    Might replace forEach() with every() to break out of it whenever done
 
 24/5
     After days of pain i finallly figured out why my friends were recieving errors
@@ -92,3 +93,6 @@ ________________________________________________________________________________
     empty course "Hackaton" shifted places which exposed bug in my cleaning function. Which was only splicing the first item in array,
 
     God im tired...
+
+26/5
+    Was just fixing some small bugs and make sure that my app would not break, at least not because of user input
