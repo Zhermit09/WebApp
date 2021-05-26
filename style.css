@@ -684,7 +684,7 @@ div .today:not(.assCounter) {
 
 @media screen and (max-width: 375px) {
     html {
-        font-size: 50%;
+        font-size: 49%;
     }
 }
 
