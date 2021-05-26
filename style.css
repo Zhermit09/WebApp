@@ -670,6 +670,10 @@ div .today:not(.assCounter) {
     main {
         flex-direction: column;
     }
+
+    .calendar{
+        margin-bottom: 3rem;
+    }
 }
 
 @media (max-width: 425px) {
