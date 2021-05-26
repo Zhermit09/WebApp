@@ -19,7 +19,7 @@ const OAuth20 =
     "state=state_parameter_passthrough_value&" +
     "redirect_uri=https://zhermit09.github.io/WebApp/&" +
     "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
-
+//http://localhost:63342/WebApp/index.html
 let header = new Headers()
 let ongoing = false;
 let token

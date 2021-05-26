@@ -377,6 +377,7 @@ select option:checked {
 }
 
 ul {
+    height: 0;
     width: 100%;
     z-index: 0;
 }
