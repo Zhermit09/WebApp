@@ -452,6 +452,7 @@ function calendarDayFilter() {
     let temp = "";
     let dateF = new Date(calendarFullDate.innerHTML)
     removeEmpty()
+    document.querySelector('.list').scrollIntoView()
 
     timedAssignments.forEach((ass) => {
         const {DueDate} = ass
