@@ -17,7 +17,7 @@ const OAuth20 =
     "include_granted_scopes=true&" +
     "response_type=token&" +
     "state=state_parameter_passthrough_value&" +
-    "redirect_uri=https://zhermit09.github.io/WebApp/&" +
+    "redirect_uri=http://localhost:63342/WebApp/index.html&" +
     "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
 //http://localhost:63342/WebApp/index.html https://zhermit09.github.io/WebApp/
 let header = new Headers()
@@ -194,8 +194,8 @@ function createObj() {
         //So for every submission
         submissions.forEach((sub) => {
             //Take out the item
-      //      try {
-                sub = sub['studentSubmissions'][0]
+            //      try {
+            sub = sub['studentSubmissions'][0]
             //}catch (e){}
             //Then loop through assignments (who have different data)
             assignments.forEach((course) => {
@@ -524,6 +524,12 @@ document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
 })
 
 //-----------------------------------------------------------------
+
+function Size() {
+    select.style.overflow="scrollbar"
+    let count = (select.childElementCount < 10) ? select.childElementCount - 1 : 10
+    select.setAttribute("size", `${count}`)
+}
 
 function addFilters() {
     let temp = ""

@@ -349,7 +349,9 @@ select option:checked {
 .inputContainer select::-webkit-scrollbar-thumb {
     background: linear-gradient(to right, #ffffff, #b4b4b4, #ffffff);
 }
-
+.inputContainer select::-webkit-scrollbar-track-piece {
+    background-color: rgba(0, 0, 0, 0);
+}
 /*--------*/
 .assContainer {
     width: 100%;
