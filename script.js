@@ -17,7 +17,7 @@ const OAuth20 =
     "include_granted_scopes=true&" +
     "response_type=token&" +
     "state=state_parameter_passthrough_value&" +
-    "redirect_uri=http://localhost:63342/WebApp/index.html&" +
+    "redirect_uri=https://zhermit09.github.io/WebApp/&" +
     "client_id=82346440292-hlpvrpvqk6epjgqkk93566mdd6mtqocp.apps.googleusercontent.com";
 //http://localhost:63342/WebApp/index.html https://zhermit09.github.io/WebApp/
 let header = new Headers()
