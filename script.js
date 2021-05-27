@@ -6,9 +6,7 @@ window.onload = () => tokenCheck();
 
 //Scope for the Authentication thingy
 const scope =
-    "https://www.googleapis.com/auth/classroom.courses%20" +
-    "https://www.googleapis.com/auth/classroom.coursework.me%20" +
-    "https://www.googleapis.com/auth/classroom.coursework.students%20" +
+    "https://www.googleapis.com/auth/classroom.courses.readonly%20" +
     "https://www.googleapis.com/auth/classroom.student-submissions.me.readonly%20" +
     "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly%20";
 const OAuth20 =
