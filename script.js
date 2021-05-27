@@ -7,6 +7,8 @@ window.onload = () => tokenCheck();
 //Scope for the Authentication thingy
 const scope =
     "https://www.googleapis.com/auth/classroom.courses.readonly%20" +
+    "https://www.googleapis.com/auth/classroom.coursework.me.readonly" +
+    "https://www.googleapis.com/auth/classroom.coursework.students.readonly" +
     "https://www.googleapis.com/auth/classroom.student-submissions.me.readonly%20" +
     "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly%20";
 const OAuth20 =
@@ -525,7 +527,7 @@ document.querySelector('#assigmentList').addEventListener('dblclick', (e) => {
 //-----------------------------------------------------------------
 
 function Size() {
-    select.style.overflow="scrollbar"
+    select.style.overflow = "scrollbar"
     let count = (select.childElementCount < 10) ? select.childElementCount - 1 : 10
     select.setAttribute("size", `${count}`)
 }
